@@ -12,7 +12,7 @@ if sys.version_info.minor < 8:
 else:
     from importlib.metadata import version as get_version
 from codemeta.common import AttribDict, REPOSTATUS, license_to_spdx, SDO, CODEMETA, SOFTWARETYPES, SOFTWAREIODATA, TRL, CODEMETAPY, SCHEMA_SOURCE, CODEMETA_SOURCE, SCHEMA_LOCAL_SOURCE, SCHEMA_SOURCE, CODEMETA_LOCAL_SOURCE, CODEMETA_SOURCE, STYPE_SOURCE, STYPE_LOCAL_SOURCE, init_context, SINGULAR_PROPERTIES, ORDEREDLIST_PROPERTIES,  get_subgraph, get_last_component, query, iter_ordered_list, get_doi
-from codemeta import __path__ as rootpath
+from codemeta2html import __path__ as rootpath
 import codemeta.parsers.gitapi
 from jinja2 import Environment, FileSystemLoader
 
@@ -228,8 +228,8 @@ def get_target_platforms(g: Graph, res: Union[URIRef,None]):
 
 def serialize_to_html( g: Graph, res: Union[Sequence,URIRef,None], args: AttribDict, contextgraph: Graph, sparql_query: Optional[str] = None,  **kwargs) -> str:
     """Serialize to HTML with RDFa"""
-    assert isinstance(rootpath, (list,tuple)) and len(rootpath) > 0
-    env = Environment( loader=FileSystemLoader(os.path.join(rootpath[0], 'templates')), autoescape=True, trim_blocks=True, lstrip_blocks=True)
+    rootpath = sys.modules['codemeta2html'].__path__[0]
+    env = Environment( loader=FileSystemLoader(os.path.join(rootpath, 'templates')), autoescape=True, trim_blocks=True, lstrip_blocks=True)
     if res and not isinstance(res, (list,tuple)):
         if (res, RDF.type, SDO.SoftwareSourceCode) in g:
             template = "page_softwaresourcecode.html"
@@ -257,7 +257,7 @@ def serialize_to_html( g: Graph, res: Union[Sequence,URIRef,None], args: AttribD
         else:
             index = get_index(g)
     template = env.get_template(template)
-    return template.render(g=g,res=res, SDO=SDO,CODEMETA=CODEMETA, CODEMETAPY=CODEMETAPY, RDF=RDF,RDFS=RDFS,STYPE=SOFTWARETYPES, SOFTWAREIODATA=SOFTWAREIODATA, REPOSTATUS=REPOSTATUS, SKOS=SKOS, TRL=TRL, get_triples=get_triples, get_description=get_description, get_target_platforms=get_target_platforms, type_label=type_label, css=args.css, contextgraph=contextgraph, URIRef=URIRef, get_badge=get_badge, now=datetime.now().strftime("%Y-%m-%d %H:%M:%S"), index=index, get_interface_types=get_interface_types,baseuri=args.baseuri,baseurl=args.baseurl, toolstore=args.toolstore, intro=args.intro, get_last_component=get_last_component, is_resource=is_resource, int=int, range=range, str=str, Literal=Literal, get_version=get_version, chain=chain,get_doi=get_doi, has_actionable_targetproducts=has_actionable_targetproducts, has_displayable_targetproducts=has_displayable_targetproducts, **kwargs)
+    return template.render(g=g,res=res, SDO=SDO,CODEMETA=CODEMETA, CODEMETAPY=CODEMETAPY, RDF=RDF,RDFS=RDFS,STYPE=SOFTWARETYPES, SOFTWAREIODATA=SOFTWAREIODATA, REPOSTATUS=REPOSTATUS, SKOS=SKOS, TRL=TRL, get_triples=get_triples, get_description=get_description, get_target_platforms=get_target_platforms, type_label=type_label, css=args.css, contextgraph=contextgraph, URIRef=URIRef, get_badge=get_badge, now=datetime.now().strftime("%Y-%m-%d %H:%M:%S"), index=index, get_interface_types=get_interface_types,baseuri=args.baseuri,baseurl=args.baseurl, buildsite=args.buildsite, intro=args.intro, get_last_component=get_last_component, is_resource=is_resource, int=int, range=range, str=str, Literal=Literal, get_version=get_version, chain=chain,get_doi=get_doi, has_actionable_targetproducts=has_actionable_targetproducts, has_displayable_targetproducts=has_displayable_targetproducts, **kwargs)
 
 
 

@@ -33,8 +33,7 @@ setup(
     ],
     zip_safe=False,
     include_package_data=True,
-    package_data = { 'codemeta2html': ['templates/*.html','resources/*.css', 'resources/fa-*' ] },
-    install_requires=[ 'codemetapy','Jinja2'],
+    package_data = { 'codemeta2html': ['templates/*.html','style/*.css', 'style/fa-*' ] },
+    install_requires=[ 'codemetapy','Jinja2', 'rdflib'],
     entry_points = {    'console_scripts': [ 'codemeta2html = codemeta2html.codemeta2html:main' ] },
-    cmdclass=cmdclass
 )

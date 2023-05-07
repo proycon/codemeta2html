@@ -1,6 +1,6 @@
 <tr about="{{ res }}" class="softwaresourcecode" typeof="schema:SoftwareSourceCode">
     <td class="name" property="schema:name">
-    {% if baseuri and toolstore %}
+    {% if baseuri and buildsite %}
     <a href="{{ res }}">
     {% endif %}
     {% if g.value(res, SDO.name) %}

@@ -1,3 +1,6 @@
+        {% if baseurl and buildsite %}
+        <base href="{{ baseurl }}" />
+        {% endif %}
         <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
         <title>
         {% if res and (res, SDO.name, None) in g %}
@@ -8,7 +11,7 @@
             {{ g.value(res, RDFS.label) }}
         {% elif title %}
             {{ title }}
-        {% elif toolstore %}
+        {% elif buildsite %}
             Tool Index
         {% endif %}
         </title>
@@ -18,7 +21,7 @@
         {% endfor %}
         {% endif %}
         {% if res %}
-        {% if baseuri and toolstore %}
+        {% if baseuri and buildsite %}
         <link rel="alternate" type="application/json+ld" href="{{ res }}.json" />
         <link rel="alternate" type="text/turtle" href="{{ res }}.ttl" />
         {% endif %}
@@ -46,4 +49,4 @@
         <meta name="keywords" content="{% for label, _ in get_triples(g, res, SDO.keywords, abcsort=True) %}{{label}},{% endfor %}" />
         {% endif %}
         {% endif %}
-        <meta name="generator" content="codemetapy {{ get_version("codemetapy") }}" />
+        <meta name="generator" content="codemeta2html {{ get_version("codemeta2html") }}, codemetapy {{ get_version("codemetapy") }}" />

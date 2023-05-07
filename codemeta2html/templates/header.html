@@ -4,14 +4,17 @@
     <h1>{{title}}</h1>
     {% endif %}
 </div>
-{% if toolstore %}
+{% if buildsite %}
 <div id="navbar">
     <nav>
-        <i class="fa fa-list"></i> <a href="{{baseurl}}">All tools</a>
-        <i class="fa fa-globe"></i> <a href="{{baseurl}}services/">Services only</a>
-        <i class="fa fa-table"></i> <a href="{{baseurl}}table/">Table view</a>
-        <i class="fa fa-keyboard"></i> <a href="{{baseurl}}api/">SPARQL</a>
+        <i class="fa fa-list"></i> <a href="">All tools</a>
+        <i class="fa fa-globe"></i> <a href="services/">Services only</a>
+        <i class="fa fa-table"></i> <a href="table/">Table view</a>
+        {% if serverside %}
+        <i class="fa fa-keyboard"></i> <a href="api/">SPARQL</a>
+        {%  endif %}
     </nav>
+    {% if serverside %}
     <div id="search">
         <form method="get" action="{{baseurl}}">
             <input name="q" title="Your query, multiple conditions can be separated by a semicolon" value="{{q}}" />
@@ -20,5 +23,6 @@
         </button>
         </form>
     </div>
+    {% endif %}
 </div>
 {% endif %}
