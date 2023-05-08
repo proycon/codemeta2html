@@ -5,23 +5,30 @@
     </head>
     <body class="cards">
         {% include "header.html" %}
-        {% include "intro.html" %}
-        <div class="toc">
-        {% include "toc.html" %}
-        </div>
-        <div class="cards">
-        {% for group, explicit, resources in index %}
-        {% if explicit %}
-        <div class="group">
-            <h2>{{ group }}</h2>
-        {% endif %}
-        {% for res, label in resources %}
-        {% include 'card_softwaresourcecode.html' %}
-        {% endfor %}
-        {% if explicit %}
-        </div>
-        {% endif %}
-        {% endfor %}
+        <div class="cardcontainer">
+         <div class="margincolumn">
+            <div class="toc">
+            {% include "toc.html" %}
+            </div>
+            <div id="filters">
+            {% include "filters.html" %}
+            </div>
+         </div>
+         <div class="maincolumn">
+            {% include "intro.html" %}
+            {% for group, explicit, resources in index %}
+            {% if explicit %}
+            <div class="group">
+                <h2>{{ group }}</h2>
+            {% endif %}
+            {% for res, label in resources %}
+            {% include 'card_softwaresourcecode.html' %}
+            {% endfor %}
+            {% if explicit %}
+            </div>
+            {% endif %}
+            {% endfor %}
+         </div>
         </div>
         {% include 'indexfooter.html' %}
     </body>

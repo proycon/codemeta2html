@@ -1,0 +1,10 @@
+{% set classes = filter_classes(g, None, contextgraph) %}
+{% for group in get_groups_classes(classes) %}
+    <ul><li><label>{{ group }}<label><ul>
+    {% for slug, label, description, groupname, groupsort in classes %} 
+        {% if groupname == group %}
+        <li title="description"><input type="checkbox" name="{{ slug }}" /> <label>{{ label }}<label></li>
+        {% endif %}
+    {% endfor %}
+    </ul></li></ul>
+{% endfor %}

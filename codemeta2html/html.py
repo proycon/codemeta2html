@@ -3,9 +3,12 @@ import os.path
 from datetime import datetime
 from collections import OrderedDict
 import codemeta.parsers.gitapi
+import unicodedata
+import re
+from hashlib import md5
 from rdflib import Graph, URIRef, BNode, Literal
 from rdflib.namespace import RDF, SKOS, RDFS
-from typing import Union, IO, Optional, Sequence
+from typing import Union, IO, Optional, Sequence, Iterator
 from itertools import chain
 if sys.version_info.minor < 8:
     from importlib_metadata import version as get_version #backported
@@ -213,6 +216,54 @@ def get_interface_types(g: Graph, res: Union[URIRef,None], contextgraph: Graph, 
         types.add(("Unknown", "Sorry, we don't know what kind of interfaces this software provides. No interface types have been specified or could be automatically extracted."))
     return list(sorted(types))
 
+def filter_classes(g: Graph, res: Union[URIRef,None], contextgraph: Graph) -> list:
+    classes = set()
+    for interfacetype, description  in get_interface_types(g,res,contextgraph,fallback=True):
+        classes.add((slugify(interfacetype,"interfacetype"), interfacetype, description, "Interface type",0))
+    for _,_,devstatres in g.triples((res, CODEMETA.developmentStatus, None)):
+        if (devstatres, SKOS.prefLabel, None) in contextgraph:
+            devstatlabel = contextgraph.value(devstatres, SKOS.prefLabel)
+        else:
+            devstatlabel = str(devstatres)
+        if (devstatres, SKOS.definition, None) in contextgraph:
+            devstatdesc = contextgraph.value(devstatres, SKOS.definition)
+        else:
+            devstatdesc = ""
+        classes.add((slugify(str(devstatres),"developmentstatus"),devstatlabel,devstatdesc,"Development status",1))
+    for _,_,catres in g.triples((res, SDO.applicationCategory, None)):
+        if (catres, SKOS.prefLabel, None) in contextgraph:
+            catlabel = contextgraph.value(catres, SKOS.prefLabel)
+        else:
+            catlabel = str(catres)
+        if (catres, SKOS.definition, None) in contextgraph:
+            catdesc = contextgraph.value(catres, SKOS.definition)
+        else:
+            catdesc = ""
+        classes.add((slugify(str(catres),"category"),catlabel,catdesc,"Category",2))
+    for _,_,keyword in g.triples((res, SDO.keywords, None)):
+        classes.add((slugify(str(keyword),"keyword"),keyword,"","Keywords",3))
+    classes = list(classes)
+    classes.sort(key=lambda x: (x[4], x[1]))
+    return classes
+
+def get_groups_classes(classes: list) -> Iterator[str]:
+    lastgroup = None
+    for slug, label, description, group, groupsort in classes:
+        if group != lastgroup:
+            yield group
+        lastgroup = group
+
+def get_filter_classes(g: Graph, res: Union[URIRef,None], contextgraph: Graph) -> str:
+    return " ".join(( x[0] for x in filter_classes(g,res,contextgraph)))
+
+def slugify(s: str, prefix: str) -> str:
+    slug = unicodedata.normalize('NFKD', s.lower())
+    slug = re.sub(r'[^a-z0-9]+', '-', slug).strip('-')
+    slug = re.sub(r'[-]+', '-', slug)
+    if len(slug) > 30:
+        slug = md5(slug.encode('utf-8')).hexdigest()
+    return prefix + "-" + slug
+    
 
 def get_target_platforms(g: Graph, res: Union[URIRef,None]):
     types =  set()
@@ -257,7 +308,7 @@ def serialize_to_html( g: Graph, res: Union[Sequence,URIRef,None], args: AttribD
         else:
             index = get_index(g)
     template = env.get_template(template)
-    return template.render(g=g,res=res, SDO=SDO,CODEMETA=CODEMETA, CODEMETAPY=CODEMETAPY, RDF=RDF,RDFS=RDFS,STYPE=SOFTWARETYPES, SOFTWAREIODATA=SOFTWAREIODATA, REPOSTATUS=REPOSTATUS, SKOS=SKOS, TRL=TRL, get_triples=get_triples, get_description=get_description, get_target_platforms=get_target_platforms, type_label=type_label, css=args.css, contextgraph=contextgraph, URIRef=URIRef, get_badge=get_badge, now=datetime.now().strftime("%Y-%m-%d %H:%M:%S"), index=index, get_interface_types=get_interface_types,baseuri=args.baseuri,baseurl=args.baseurl, buildsite=args.buildsite, link_resource=link_resource, intro=args.intro, get_last_component=get_last_component, is_resource=is_resource, int=int, range=range, str=str, Literal=Literal, get_version=get_version, chain=chain,get_doi=get_doi, has_actionable_targetproducts=has_actionable_targetproducts, has_displayable_targetproducts=has_displayable_targetproducts, **kwargs)
+    return template.render(g=g,res=res, SDO=SDO,CODEMETA=CODEMETA, CODEMETAPY=CODEMETAPY, RDF=RDF,RDFS=RDFS,STYPE=SOFTWARETYPES, SOFTWAREIODATA=SOFTWAREIODATA, REPOSTATUS=REPOSTATUS, SKOS=SKOS, TRL=TRL, get_triples=get_triples, get_description=get_description, get_target_platforms=get_target_platforms, type_label=type_label, css=args.css, contextgraph=contextgraph, URIRef=URIRef, get_badge=get_badge, now=datetime.now().strftime("%Y-%m-%d %H:%M:%S"), index=index, get_interface_types=get_interface_types,get_filter_classes=get_filter_classes, filter_classes=filter_classes, get_groups_classes=get_groups_classes, baseuri=args.baseuri,baseurl=args.baseurl, buildsite=args.buildsite, link_resource=link_resource, intro=args.intro, get_last_component=get_last_component, is_resource=is_resource, int=int, range=range, str=str, Literal=Literal, get_version=get_version, chain=chain,get_doi=get_doi, has_actionable_targetproducts=has_actionable_targetproducts, has_displayable_targetproducts=has_displayable_targetproducts, **kwargs)
 
 def link_resource(g: Graph, res: URIRef, baseuri: Optional[str]) -> str:
     """produces a link to a resource page"""

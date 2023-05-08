@@ -54,12 +54,24 @@ div.rightcolumn {
     flex: 40%;
 }
 
+div.margincolumn {
+    flex: 30%;
+}
+div.maincolumn {
+    flex: 70%;
+}
+
 @media screen and (max-width: 600px) {
     div.leftcolumn div.rightcolumn {
         flex: 100%;
     }
 }
 
+
+div.cardcontainer {
+    display: flex;
+    width: 100%;
+}
 
 body.page div.softwaresourcecode {
     display: flex;
@@ -508,8 +520,10 @@ div.group>h2 {
 div.group {
     border-top: 1px #000c48 solid;
     border-bottom: 1px #000c48 solid;
-    border-left: 10px #000c48 solid;
-    background: #00000020;
+    border-left: 1px #000c48 solid;
+    border-left: 1px #000c48 solid;
+    border-radius: 20px;
+    background: #b0b0c661;
     margin-bottom: 5px;
 }
 table td.group {
@@ -527,14 +541,29 @@ body.page div.cards div.card {
 div.screenshots img {
     max-width: 800px;
 }
-div.toc {
-    min-width: 320px;
-    max-width: 640px;
-    border: 1px solid #cbdfe5;
+div.toc, div#filters {
+    width: 90%;
+    border: none;
     border-radius: 20px;
-    background: #fff;
+    background: #e3e3e7b0;
     padding: 10px;
     margin-bottom: 15px;
     margin-left: auto;
     margin-right: auto;
+    font-size: 0.9em;
+}
+div.toc ul {
+    list-style-type: "- ";
+}
+div.toc ul, div#filters ul {
+    padding-left: 10px;
+}
+div#filters ul {
+    list-style-type: none;
+}
+div#filters>ul>li>label {
+    font-weight: bold;
+}
+div#filters>ul>li>ul>li>label {
+    font-weight: normal;
 }
