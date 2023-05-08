@@ -257,7 +257,19 @@ def serialize_to_html( g: Graph, res: Union[Sequence,URIRef,None], args: AttribD
         else:
             index = get_index(g)
     template = env.get_template(template)
-    return template.render(g=g,res=res, SDO=SDO,CODEMETA=CODEMETA, CODEMETAPY=CODEMETAPY, RDF=RDF,RDFS=RDFS,STYPE=SOFTWARETYPES, SOFTWAREIODATA=SOFTWAREIODATA, REPOSTATUS=REPOSTATUS, SKOS=SKOS, TRL=TRL, get_triples=get_triples, get_description=get_description, get_target_platforms=get_target_platforms, type_label=type_label, css=args.css, contextgraph=contextgraph, URIRef=URIRef, get_badge=get_badge, now=datetime.now().strftime("%Y-%m-%d %H:%M:%S"), index=index, get_interface_types=get_interface_types,baseuri=args.baseuri,baseurl=args.baseurl, buildsite=args.buildsite, intro=args.intro, get_last_component=get_last_component, is_resource=is_resource, int=int, range=range, str=str, Literal=Literal, get_version=get_version, chain=chain,get_doi=get_doi, has_actionable_targetproducts=has_actionable_targetproducts, has_displayable_targetproducts=has_displayable_targetproducts, **kwargs)
+    return template.render(g=g,res=res, SDO=SDO,CODEMETA=CODEMETA, CODEMETAPY=CODEMETAPY, RDF=RDF,RDFS=RDFS,STYPE=SOFTWARETYPES, SOFTWAREIODATA=SOFTWAREIODATA, REPOSTATUS=REPOSTATUS, SKOS=SKOS, TRL=TRL, get_triples=get_triples, get_description=get_description, get_target_platforms=get_target_platforms, type_label=type_label, css=args.css, contextgraph=contextgraph, URIRef=URIRef, get_badge=get_badge, now=datetime.now().strftime("%Y-%m-%d %H:%M:%S"), index=index, get_interface_types=get_interface_types,baseuri=args.baseuri,baseurl=args.baseurl, buildsite=args.buildsite, link_resource=link_resource, intro=args.intro, get_last_component=get_last_component, is_resource=is_resource, int=int, range=range, str=str, Literal=Literal, get_version=get_version, chain=chain,get_doi=get_doi, has_actionable_targetproducts=has_actionable_targetproducts, has_displayable_targetproducts=has_displayable_targetproducts, **kwargs)
 
-
-
+def link_resource(g: Graph, res: URIRef, baseuri: Optional[str]) -> str:
+    """produces a link to a resource page"""
+    link = str(res) #fallback
+    if baseuri:
+        link = str(res).replace(baseuri,"") #we remove the (absolute) baseuri and rely on baseurl set in html/head/base
+    elif (res,SDO.identifier,None) in g:
+        pos = str(res).find("/" + str(g.value(res, SDO.identifier)))
+        if pos > -1:
+            link = str(res)[pos+1:]
+        elif str(res).startswith(("https://","http://")):
+            link = "/".join(str(res).split("/")[3:])
+    if link and link[-1] != "/":
+        link += "/"
+    return link

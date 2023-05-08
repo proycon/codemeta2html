@@ -1,17 +1,17 @@
 <tr about="{{ res }}" class="softwaresourcecode" typeof="schema:SoftwareSourceCode">
     <td class="name" property="schema:name">
     {% if buildsite %}
-        {% set linkres = res %}
-        {% set linkmsg = "Go to the overview page for this tool" %}
-        {% include 'link_resource.html' %}
+        <a href="{{ link_resource(g,res,baseuri) }}" title="Go to the overview page for this tool">
     {% endif %}
+
     {% if g.value(res, SDO.name) %}
     {{ g.value(res, SDO.name) }}
     {% else %}
     {{ g.value(res, SDO.identifier) }}
     {% endif %}
+
     {% if buildsite %}
-    </a>
+        </a>
     {% endif %}
     </td>
     <td class="version">

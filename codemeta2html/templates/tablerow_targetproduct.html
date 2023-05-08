@@ -2,9 +2,7 @@
     <td class="name">
         {% if (targetres, SDO.name, None) in g %}
         {% if buildsite and res != targetres %}
-            {% set linkres = res %}
-            {% set linkmsg = "Go to the overview page for this tool" %}
-            {% include 'link_resource.html' %}
+            <a href="{{ link_resource(g,res,baseuri) }}" title="Go to the overview page for this tool">
             <span property="schema:name">{{ g.value(targetres, SDO.name) }}</span>
             </a>
         {% else %}

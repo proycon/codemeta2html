@@ -18,9 +18,7 @@
     <h2>
         <span class="name" property="schema:name">
         {% if buildsite %}
-            {% set linkres = res %}
-            {% set linkmsg = "Go to the overview page for this tool" %}
-            {% include 'link_resource.html' %}
+            <a href="{{ link_resource(g,res,baseuri) }}" title="Go to the overview page for this tool">
         {% endif %}
 
         {% if g.value(targetres, SDO.name) %}
@@ -30,7 +28,7 @@
         {% endif %}
 
         {% if buildsite %}
-        </a>
+            </a>
         {% endif %}
         </span>
         <span class="version">
