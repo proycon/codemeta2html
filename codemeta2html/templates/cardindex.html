@@ -3,7 +3,30 @@
     <head>
         {% include "head.html" %}
     </head>
-    <body class="cards">
+    <body class="cards" {% if buildsite %}x-data="{ 
+        filters: [],
+        toggle_filter(filter) {
+            if (this.filters.includes(filter)) {
+                this.filters = this.filters.filter(x => x != filter);
+            } else {
+                this.filters.push(filter);
+            }
+        },
+        check_filter(filterables) {
+            if (this.filters.length == 0) {
+                return true;
+            } else {
+                for (const filter1 of this.filters) {
+                    for (const filter2 of filterables) {
+                        if (filter1 == filter2) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+        }
+    }"{% endif %}>
         {% include "header.html" %}
         <div class="cardcontainer">
          <div class="margincolumn">
@@ -18,7 +41,7 @@
             {% include "intro.html" %}
             {% for group, explicit, resources in index %}
             {% if explicit %}
-            <div class="group">
+            <div {% if not buildsite %}class="group"{% else %}x-bind:class="(filters.length > 0) ? 'hiddengroup' : 'group'"{% endif %}>
                 <h2>{{ group }}</h2>
             {% endif %}
             {% for res, label in resources %}

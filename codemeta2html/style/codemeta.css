@@ -315,7 +315,7 @@ a:hover {
     color: #bb0138;
 }
 
-div.card {
+div.card, div.intro {
     min-width: 320px;
     max-width: 640px;
     border: 1px solid #cbdfe5;
@@ -327,7 +327,7 @@ div.card {
     margin-left: auto;
     margin-right: auto;
 }
-div.card h2 {
+div.card h2, div.intro h2 {
     color: #000c48;
     margin-bottom: 2px;
     margin-top: 0px;
@@ -534,6 +534,15 @@ table td.group {
     color: white;
     height: 5px;
 }
+div.hiddengroup {
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+    background: transparent;
+}
+div.hiddengroup>h2 {
+    display: none;
+}
 body.page div.cards div.card {
     display: block;
     border: 1px solid black;
@@ -566,4 +575,5 @@ div#filters>ul>li>label {
 }
 div#filters>ul>li>ul>li>label {
     font-weight: normal;
+    cursor: help;
 }

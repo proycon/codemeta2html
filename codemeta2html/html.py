@@ -241,7 +241,7 @@ def filter_classes(g: Graph, res: Union[URIRef,None], contextgraph: Graph) -> li
             catdesc = ""
         classes.add((slugify(str(catres),"category"),catlabel,catdesc,"Category",2))
     for _,_,keyword in g.triples((res, SDO.keywords, None)):
-        classes.add((slugify(str(keyword),"keyword"),keyword,"","Keywords",3))
+        classes.add((slugify(str(keyword),"keyword"),str(keyword).lower(),"","Keywords",3))
     classes = list(classes)
     classes.sort(key=lambda x: (x[4], x[1]))
     return classes
@@ -253,16 +253,16 @@ def get_groups_classes(classes: list) -> Iterator[str]:
             yield group
         lastgroup = group
 
-def get_filter_classes(g: Graph, res: Union[URIRef,None], contextgraph: Graph) -> str:
-    return " ".join(( x[0] for x in filter_classes(g,res,contextgraph)))
+def get_filter_classes(g: Graph, res: Union[URIRef,None], contextgraph: Graph) -> list:
+    return [ x[0] for x in filter_classes(g,res,contextgraph) ]
 
 def slugify(s: str, prefix: str) -> str:
     slug = unicodedata.normalize('NFKD', s.lower())
-    slug = re.sub(r'[^a-z0-9]+', '-', slug).strip('-')
-    slug = re.sub(r'[-]+', '-', slug)
+    slug = re.sub(r'[^a-z0-9]+', '_', slug).strip('-')
+    slug = re.sub(r'[_]+', '_', slug)
     if len(slug) > 30:
         slug = md5(slug.encode('utf-8')).hexdigest()
-    return prefix + "-" + slug
+    return prefix + "_" + slug
     
 
 def get_target_platforms(g: Graph, res: Union[URIRef,None]):

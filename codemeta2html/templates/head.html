@@ -50,3 +50,7 @@
         {% endif %}
         {% endif %}
         <meta name="generator" content="codemeta2html {{ get_version("codemeta2html") }}, codemetapy {{ get_version("codemetapy") }}" />
+        {% if buildsite %}
+        <script defer src="style/alpine.min.js"></script>
+        {% endif %}
+
