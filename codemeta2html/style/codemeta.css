@@ -10,6 +10,7 @@ div#header {
     background: #000c48;
     color: white;
     text-align: center;
+    min-height: 1.2em;
 }
 div#header h1 {
     margin: 0px;
@@ -25,6 +26,7 @@ div#navbar {
     background: white;
     margin-bottom: 3px;
     vertical-align: middle;
+    min-height: 1.2em;
 }
 nav {
     float: right;
@@ -61,10 +63,11 @@ div.rightcolumn {
 
 body.page div.softwaresourcecode {
     display: flex;
+    width: 100%;
 }
 
 body.page div.softwaresourcecode div.properties {
-    background: #e4e4e4;
+    background: #e3e3e7;
     padding: 10px;
     border-radius: 25px;
 }
@@ -439,6 +442,11 @@ div.log {
 pre#harvestlog {
     word-wrap: break-word;
     white-space: pre-wrap;
+    background: black;
+    color: white;
+    padding: 5px;
+    padding-top: 20px;
+    border-radius: 20px;
 }
 .rating0, .rating1, .rating0 a, .rating1 a {
     color: red;
