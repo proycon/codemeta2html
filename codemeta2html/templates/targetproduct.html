@@ -50,9 +50,9 @@
     <div class="screenshots">
         {% for url, res2 in get_triples(g, targetres, SDO.screenshot, SDO.url) %}
             {% if g.value(res2, SDO.caption) %}
-                <img src="{{ url }}" alt="screenshot: {{ g.value(res2, SDO.caption) }}" title="{{ g.value(res2, SDO.caption) }}" />
+                <img src="{{ url }}" alt="screenshot: {{ g.value(res2, SDO.caption) }}" title="{{ g.value(res2, SDO.caption) }}" rel="schema:screenshot" />
             {% else %}
-                <img src="{{ url }}" alt="screenshot" />
+                <img src="{{ url }}" alt="screenshot" rel="schema:screenshot" />
             {% endif %}
         {% endfor %}
     </div>
@@ -66,17 +66,17 @@
         <ul>
         {% for title, ref in get_triples(g, targetres, CODEMETA.referencePublication, contextgraph=contextgraph) %}
         {% if ref %}
-        <li>{% include 'reference.html' %}</li>
+        <li property="codemeta:referencePublication" content="{{ ref }}">{% include 'reference.html' %}</li>
         {% else %}
-        <li>{{ title }}</li>
+        <li property="codemeta:referencePublication">{{ title }}</li>
         {% endif %}
         {% endfor %}
 
         {% for title, ref in get_triples(g, targetres, SDO.citation, contextgraph=contextgraph) %}
         {% if ref %}
-        <li>{% include 'reference.html' %}</li>
+        <li property="schema:citation" content="{{ ref }}">{% include 'reference.html' %}</li>
         {% else %}
-        <li>{{ title }}</li>
+        <li property="codemeta:citation">{{ title }}</li>
         {% endif %}
         {% endfor %}
         </ul>

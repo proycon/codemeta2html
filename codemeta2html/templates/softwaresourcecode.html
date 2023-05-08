@@ -7,7 +7,7 @@
     {% endif %}
 
     {% if g.value(sscres, SDO.thumbnailUrl) %}
-    <img class="thumbnail" src="{{ g.value(sscres, SDO.thumbnailUrl) }}" alt="{{ g.value(sscres, SDO.name) }}" />
+    <img class="thumbnail" src="{{ g.value(sscres, SDO.thumbnailUrl) }}" alt="{{ g.value(sscres, SDO.name) }}" rel="schema:thumbnailUrl" />
     {% endif %}
 
     {% if g.value(sscres, SDO.description) %}
@@ -20,7 +20,7 @@
             <i class="fa fa-home"></i>
             <a rel="schema:url" href="{{ g.value(sscres, SDO.url) }}">
                 <strong>Go to the software website</strong>
-                <tt>{{ g.value(sscres, SDO.url) }}</tt>
+                <tt property="schema:url">{{ g.value(sscres, SDO.url) }}</tt>
             </a>
         </div>
         {% elif g.value(sscres, SDO.codeRepository) %}
@@ -28,7 +28,7 @@
             <i class="fa fa-code-branch"></i>
             <a rel="schema:url" href="{{ g.value(sscres, SDO.codeRepository) }}">
                 <strong>Go to the source repository</strong>
-                <tt>{{ g.value(sscres, SDO.codeRepository) }}</tt>
+                <tt property="schema:codeRepository">{{ g.value(sscres, SDO.codeRepository) }}</tt>
             </a>
         </div>
         {% endif %}
@@ -65,9 +65,9 @@
     <div class="screenshots">
         {% for url, res2 in get_triples(g, sscres, SDO.screenshot, SDO.url) %}
             {% if g.value(res2, SDO.caption) %}
-                <img src="{{ url }}" alt="screenshot: {{ g.value(res2, SDO.caption) }}" title="{{ g.value(res2, SDO.caption) }}" />
+                <img src="{{ url }}" alt="screenshot: {{ g.value(res2, SDO.caption) }}" title="{{ g.value(res2, SDO.caption) }}" rel="schema:screenshot" />
             {% else %}
-                <img src="{{ url }}" alt="screenshot" />
+                <img src="{{ url }}" alt="screenshot" rel="schema:screenshot" />
             {% endif %}
         {% endfor %}
     </div>
@@ -81,17 +81,17 @@
         <ul>
         {% for title, ref in get_triples(g, sscres, CODEMETA.referencePublication, contextgraph=contextgraph) %}
         {% if ref %}
-        <li>{% include 'reference.html' %}</li>
+        <li property="codemeta:referencePublication" content="{{ ref }}">{% include 'reference.html' %}</li>
         {% else %}
-        <li>{{ title }}</li>
+        <li property="codemeta:referencePublication">{{ title }}</li>
         {% endif %}
         {% endfor %}
 
         {% for title, ref in get_triples(g, sscres, SDO.citation, contextgraph=contextgraph) %}
         {% if ref %}
-        <li>{% include 'reference.html' %}</li>
+        <li property="schema:citation" content="{{ ref }}">{% include 'reference.html' %}</li>
         {% else %}
-        <li>{{ title }}</li>
+        <li property="schema:citation">{{ title }}</li>
         {% endif %}
         {% endfor %}
         </ul>

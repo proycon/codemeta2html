@@ -1,0 +1,16 @@
+{% if baseuri and linkres.startswith(baseuri) and baseuri == baseurl %}
+<a href="{{ linkres }}" title="{{ linkmsg }}">
+{% elif baseuri %}
+<a href="{{ linkres.replace(baseuri, "") }}" title="{{ linkmsg }}">
+{% else %}
+    {% set pos = linkres.find("/" + str(g.value(linkres, SDO.identifier))) %}
+    {% if pos > -1 %}
+        {% set linkres_stripped = str(linkres)[pos+1:] %}
+        <a href="{{ linkres_stripped }}" title="{{ linkmsg }}">
+    {% elif str(linkres).startswith("https://") or str(linkres).startswith("http://") %}
+        {% set linkres_stripped = str(linkres).split("/")[3:] %}
+        <a href="{{ linkres_stripped }}" title="{{ linkmsg }}">
+    {% else %}
+        <a>
+    {% endif %}
+{% endif %}

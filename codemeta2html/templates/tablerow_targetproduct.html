@@ -1,10 +1,14 @@
 <tr about="{{ targetres }}" typeof="{{ g.value(targetres, RDF.type) }}" class="targetProduct {{ get_last_component(g.value(targetres, RDF.type)) }}">
-    <td class="name" property="schema:name">
+    <td class="name">
         {% if (targetres, SDO.name, None) in g %}
-        {% if res != targetres %}
-        <a href="{{ res }}">{{ g.value(targetres, SDO.name) }}</a>
+        {% if buildsite and res != targetres %}
+            {% set linkres = res %}
+            {% set linkmsg = "Go to the overview page for this tool" %}
+            {% include 'link_resource.html' %}
+            <span property="schema:name">{{ g.value(targetres, SDO.name) }}</span>
+            </a>
         {% else %}
-        {{ g.value(targetres, SDO.name) }}
+        <span property="schema:name">{{ g.value(targetres, SDO.name) }}</span>
         {% endif %}
         {% endif %}
     </td>
@@ -20,10 +24,10 @@
         {% endfor %}
         </ul>
     </td>
-    <td class="description" property="schema:description">
+    <td class="description">
         {% if  (targetres, SDO.description, None) in g %}
         {% if g.value(targetres, SDO.description) != g.value(res, SDO.description) %}
-        <em>{{ g.value(targetres, SDO.description) }}</em>
+        <em property="schema:description">{{ g.value(targetres, SDO.description) }}</em>
         {% endif %}
         {% endif %}
     </td>

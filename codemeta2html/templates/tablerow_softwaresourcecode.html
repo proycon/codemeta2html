@@ -1,14 +1,16 @@
 <tr about="{{ res }}" class="softwaresourcecode" typeof="schema:SoftwareSourceCode">
     <td class="name" property="schema:name">
-    {% if baseuri and buildsite %}
-    <a href="{{ res }}">
+    {% if buildsite %}
+        {% set linkres = res %}
+        {% set linkmsg = "Go to the overview page for this tool" %}
+        {% include 'link_resource.html' %}
     {% endif %}
     {% if g.value(res, SDO.name) %}
     {{ g.value(res, SDO.name) }}
     {% else %}
     {{ g.value(res, SDO.identifier) }}
     {% endif %}
-    {% if baseuri %}
+    {% if buildsite %}
     </a>
     {% endif %}
     </td>
@@ -122,7 +124,7 @@
 {% if g.value(res, SDO.targetProduct) %}
 {% for _,_,targetres in g.triples((res, SDO.targetProduct, None)) %}
 {% if g.value(targetres, SDO.name) or g.value(targetres, STYPE.executableName) or g.value(targetres, SDO.url) %}
-{% include 'item_targetproduct.html' %}
+{% include 'tablerow_targetproduct.html' %}
 {% endif %}
 {% endfor %}
 {% endif %}

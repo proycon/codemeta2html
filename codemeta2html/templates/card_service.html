@@ -17,15 +17,19 @@
 
     <h2>
         <span class="name" property="schema:name">
-        {% if baseuri and buildsite %}
-        <a href="{{ res }}" title="Go to the overview page for this tool">
+        {% if buildsite %}
+            {% set linkres = res %}
+            {% set linkmsg = "Go to the overview page for this tool" %}
+            {% include 'link_resource.html' %}
         {% endif %}
+
         {% if g.value(targetres, SDO.name) %}
-        {{ g.value(targetres, SDO.name) }}
+            {{ g.value(targetres, SDO.name) }}
         {% elif g.value(targetres, SDO.url) %}
-        {{ g.value(targetres, SDO.url).replace("https://","") }}
+            {{ g.value(targetres, SDO.url).replace("https://","") }}
         {% endif %}
-        {% if baseuri %}
+
+        {% if buildsite %}
         </a>
         {% endif %}
         </span>

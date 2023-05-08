@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:schema="http://schema.org/" xmlns:codemeta="https://codemeta.github.io/terms/" xmlns:stype="https://w3id.org/software-types/" prefix="og: https://ogp.me/ns# schema: http:/schema.org codemeta: https://codemeta.github.io/terms/">
     <head>
+        {% if buildsite and not baseurl %}
+        {% set baseurl = "../" %}
+        {% endif %}
         {% include "head.html" %}
     </head>
     <body>
@@ -26,7 +29,7 @@
         </tr>
         {% endif %}
         {% for res, label in resources %}
-        {% include 'item_softwaresourcecode.html' %}
+        {% include 'tablerow_softwaresourcecode.html' %}
         {% endfor %}
         {% if explicit and resources %}
         <tr>
