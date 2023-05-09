@@ -1,10 +1,11 @@
 import sys
 import os.path
 from datetime import datetime
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 import codemeta.parsers.gitapi
 import unicodedata
 import re
+import json
 from hashlib import md5
 from rdflib import Graph, URIRef, BNode, Literal
 from rdflib.namespace import RDF, SKOS, RDFS
@@ -216,45 +217,60 @@ def get_interface_types(g: Graph, res: Union[URIRef,None], contextgraph: Graph, 
         types.add(("Unknown", "Sorry, we don't know what kind of interfaces this software provides. No interface types have been specified or could be automatically extracted."))
     return list(sorted(types))
 
-def filter_classes(g: Graph, res: Union[URIRef,None], contextgraph: Graph) -> list:
-    classes = set()
+def get_filters(g: Graph, res: Union[URIRef,None], contextgraph: Graph, json_filterables=False) -> Union[str,list]:
+    classes = defaultdict(set)
+    sort_order = ['interfacetype','developmentstatus', 'category', 'keywords']
     for interfacetype, description  in get_interface_types(g,res,contextgraph,fallback=True):
-        classes.add((slugify(interfacetype,"interfacetype"), interfacetype, description, "Interface type",0))
+        if json_filterables:
+            classes['interfacetype'].add(slugify(interfacetype,"interfacetype"))
+        else:
+            classes['interfacetype'].add((slugify(interfacetype,"interfacetype"), interfacetype, description, "Interface type"))
+
     for _,_,devstatres in g.triples((res, CODEMETA.developmentStatus, None)):
-        if (devstatres, SKOS.prefLabel, None) in contextgraph:
-            devstatlabel = contextgraph.value(devstatres, SKOS.prefLabel)
+        if json_filterables:
+            classes['developmentstatus'].add(slugify(str(devstatres), "developmentstatus"))
         else:
-            devstatlabel = str(devstatres)
-        if (devstatres, SKOS.definition, None) in contextgraph:
-            devstatdesc = contextgraph.value(devstatres, SKOS.definition)
-        else:
-            devstatdesc = ""
-        classes.add((slugify(str(devstatres),"developmentstatus"),devstatlabel,devstatdesc,"Development status",1))
+            if (devstatres, SKOS.prefLabel, None) in contextgraph:
+                devstatlabel = contextgraph.value(devstatres, SKOS.prefLabel)
+            else:
+                devstatlabel = str(devstatres)
+            if (devstatres, SKOS.definition, None) in contextgraph:
+                devstatdesc = contextgraph.value(devstatres, SKOS.definition)
+            else:
+                devstatdesc = ""
+            classes['developmentstatus'].add((slugify(str(devstatres),"developmentstatus"),devstatlabel,devstatdesc,"Development status"))
+
     for _,_,catres in g.triples((res, SDO.applicationCategory, None)):
-        if (catres, SKOS.prefLabel, None) in contextgraph:
-            catlabel = contextgraph.value(catres, SKOS.prefLabel)
+        if json_filterables:
+            classes['category'].add(slugify(str(catres),"category"))
         else:
-            catlabel = str(catres)
-        if (catres, SKOS.definition, None) in contextgraph:
-            catdesc = contextgraph.value(catres, SKOS.definition)
-        else:
-            catdesc = ""
-        classes.add((slugify(str(catres),"category"),catlabel,catdesc,"Category",2))
+            if (catres, SKOS.prefLabel, None) in contextgraph:
+                catlabel = contextgraph.value(catres, SKOS.prefLabel)
+            else:
+                catlabel = str(catres)
+            if (catres, SKOS.definition, None) in contextgraph:
+                catdesc = contextgraph.value(catres, SKOS.definition)
+            else:
+                catdesc = ""
+            classes['category'].add((slugify(str(catres),"category"),catlabel,catdesc,"Category"))
+
     for _,_,keyword in g.triples((res, SDO.keywords, None)):
-        classes.add((slugify(str(keyword),"keyword"),str(keyword).lower(),"","Keywords",3))
-    classes = list(classes)
-    classes.sort(key=lambda x: (x[4], x[1]))
-    return classes
+        if json_filterables:
+            classes['keywords'].add(slugify(str(keyword),"keyword"))
+        else:
+            classes['keywords'].add((slugify(str(keyword),"keyword"),str(keyword).lower(),"","Keywords"))
 
-def get_groups_classes(classes: list) -> Iterator[str]:
-    lastgroup = None
-    for slug, label, description, group, groupsort in classes:
-        if group != lastgroup:
-            yield group
-        lastgroup = group
+    if json_filterables:
+        for key in classes:
+            classes[key] =  list(classes[key])  #sets are not json serializable, so make it into a list
+        return json.dumps(classes, ensure_ascii=False).replace('"',"'")
+    else:
+        for key in classes:
+            l = list(classes[key]) 
+            l.sort(key=lambda x: x[1])
+            classes[key] = l
 
-def get_filter_classes(g: Graph, res: Union[URIRef,None], contextgraph: Graph) -> list:
-    return [ x[0] for x in filter_classes(g,res,contextgraph) ]
+        return sorted(classes.items(), key=lambda x: sort_order.index(x[0]))
 
 def slugify(s: str, prefix: str) -> str:
     slug = unicodedata.normalize('NFKD', s.lower())
@@ -281,6 +297,8 @@ def serialize_to_html( g: Graph, res: Union[Sequence,URIRef,None], args: AttribD
     """Serialize to HTML with RDFa"""
     rootpath = sys.modules['codemeta2html'].__path__[0]
     env = Environment( loader=FileSystemLoader(os.path.join(rootpath, 'templates')), autoescape=True, trim_blocks=True, lstrip_blocks=True)
+    #env.policies['json.dumps_kwargs']['ensure_ascii'] = False
+    #env.policies['json.dumps_function'] = to_json
     if res and not isinstance(res, (list,tuple)):
         if (res, RDF.type, SDO.SoftwareSourceCode) in g:
             template = "page_softwaresourcecode.html"
@@ -308,7 +326,13 @@ def serialize_to_html( g: Graph, res: Union[Sequence,URIRef,None], args: AttribD
         else:
             index = get_index(g)
     template = env.get_template(template)
-    return template.render(g=g,res=res, SDO=SDO,CODEMETA=CODEMETA, CODEMETAPY=CODEMETAPY, RDF=RDF,RDFS=RDFS,STYPE=SOFTWARETYPES, SOFTWAREIODATA=SOFTWAREIODATA, REPOSTATUS=REPOSTATUS, SKOS=SKOS, TRL=TRL, get_triples=get_triples, get_description=get_description, get_target_platforms=get_target_platforms, type_label=type_label, css=args.css, contextgraph=contextgraph, URIRef=URIRef, get_badge=get_badge, now=datetime.now().strftime("%Y-%m-%d %H:%M:%S"), index=index, get_interface_types=get_interface_types,get_filter_classes=get_filter_classes, filter_classes=filter_classes, get_groups_classes=get_groups_classes, baseuri=args.baseuri,baseurl=args.baseurl, buildsite=args.buildsite, link_resource=link_resource, intro=args.intro, get_last_component=get_last_component, is_resource=is_resource, int=int, range=range, str=str, Literal=Literal, get_version=get_version, chain=chain,get_doi=get_doi, has_actionable_targetproducts=has_actionable_targetproducts, has_displayable_targetproducts=has_displayable_targetproducts, **kwargs)
+    return template.render(g=g,res=res, SDO=SDO,CODEMETA=CODEMETA, CODEMETAPY=CODEMETAPY, RDF=RDF,RDFS=RDFS,STYPE=SOFTWARETYPES, SOFTWAREIODATA=SOFTWAREIODATA, REPOSTATUS=REPOSTATUS, SKOS=SKOS, TRL=TRL, get_triples=get_triples, get_description=get_description, get_target_platforms=get_target_platforms, type_label=type_label, css=args.css, contextgraph=contextgraph, URIRef=URIRef, get_badge=get_badge, now=datetime.now().strftime("%Y-%m-%d %H:%M:%S"), index=index, get_interface_types=get_interface_types,get_filters=get_filters, baseuri=args.baseuri,baseurl=args.baseurl, buildsite=args.buildsite, link_resource=link_resource, intro=args.intro, get_last_component=get_last_component, is_resource=is_resource, int=int, range=range, str=str, Literal=Literal, get_version=get_version, chain=chain,get_doi=get_doi, has_actionable_targetproducts=has_actionable_targetproducts, has_displayable_targetproducts=has_displayable_targetproducts, **kwargs)
+
+def to_json(o, **kwargs):
+    result = json.dumps(o, ensure_ascii=False, indent=None)
+    result.replace('"',"'")
+    return result
+
 
 def link_resource(g: Graph, res: URIRef, baseuri: Optional[str]) -> str:
     """produces a link to a resource page"""

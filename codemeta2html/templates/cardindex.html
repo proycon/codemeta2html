@@ -4,44 +4,68 @@
         {% include "head.html" %}
     </head>
     <body class="cards" {% if buildsite %}x-data="{ 
-        filters: [],
+        filters: {},
         toggle_filter(filter) {
-            if (this.filters.includes(filter)) {
-                this.filters = this.filters.filter(x => x != filter);
+            let group = filter.split('_')[0];
+            if (!(group in this.filters)) {
+                this.filters[group] = [];
+            }
+            if (this.filters[group].includes(filter)) {
+                this.filters[group] = this.filters[group].filter(x => x != filter);
+                if (this.filters[group].length == 0) {
+                    delete this.filters[group];
+                }
             } else {
-                this.filters.push(filter);
+                this.filters[group].push(filter);
             }
         },
+        clear_filters() {
+            document.querySelectorAll('input[type=checkbox]:checked').forEach((checkbox) => { checkbox.checked = false; this.toggle_filter(checkbox.id); });
+        },
         check_filter(filterables) {
-            if (this.filters.length == 0) {
-                return true;
-            } else {
-                for (const filter1 of this.filters) {
-                    for (const filter2 of filterables) {
-                        if (filter1 == filter2) {
-                            return true;
+            for (const [group, filters_in_group] of Object.entries(this.filters)) {
+                if (group in filterables) {
+                    var found = false;
+                    for (const filter of filters_in_group) {
+                        if (this.filterables[group].includes(filter)) {
+                            found = true;
+                            break;
                         }
                     }
+                    if (!found) {
+                        return false;
+                    }
+                } else {
+                    return false;
                 }
-                return false;
             }
+            return true;
         }
     }"{% endif %}>
         {% include "header.html" %}
         <div class="cardcontainer">
          <div class="margincolumn">
-            <div class="toc">
-            {% include "toc.html" %}
-            </div>
-            <div id="filters">
-            {% include "filters.html" %}
+            <div class="tab-wrapper" x-data="{ activetab: 0 }">
+                <div class="tab-controls">
+                    <label {% if buildsite %}x-on:click="activetab = 0; clear_filters();" x-bind:class="{ 'activetab': activetab === 0 }"{% endif %}>Table of Contents</label>
+                    {% if buildsite %}<label x-on:click="activetab = 1" x-bind:class="{ 'activetab': activetab === 1 }">Filters</label>{% endif %}
+                </div>
+                <div class="tab-panel" class="toc" {% if buildsite %}x-show="activetab === 0"{% endif %}>
+                {% include "toc.html" %}
+                </div>
+                {% if buildsite %}
+                <div class="tab-panel" id="filters" x-bind:class="{ 'activetab': activetab === 1 }" x-show="activetab === 1" >
+                {% include "filters.html" %}
+                </div>
+                {% endif %}
             </div>
          </div>
+
          <div class="maincolumn">
             {% include "intro.html" %}
             {% for group, explicit, resources in index %}
             {% if explicit %}
-            <div {% if not buildsite %}class="group"{% else %}x-bind:class="(filters.length > 0) ? 'hiddengroup' : 'group'"{% endif %}>
+            <div {% if not buildsite %}class="group"{% else %}x-bind:class="(Object.keys(filters).length > 0) ? 'hiddengroup' : 'group'"{% endif %}>
                 <h2>{{ group }}</h2>
             {% endif %}
             {% for res, label in resources %}

@@ -1,16 +1,14 @@
-<h2>Filters</h2>
 
-<button>Clear all filters ▼</button>
+<button x-on:click="clear_filters()">Clear all filters ▼</button>
 
-DEBUG: <span x-text="`Selected filters: ${filters}`"></span>
-
-{% set classes = filter_classes(g, None, contextgraph) %}
-{% for group in get_groups_classes(classes) %}
-    <ul><li><label>{{ group }}</label><ul>
-    {% for slug, label, description, groupname, groupsort in classes %} 
-        {% if groupname == group %}
+{% for group, data in get_filters(g, None, contextgraph) %}
+    {% for slug, label, description, group in data %} 
+        {% if loop.first %}
+        <ul><li><label>{{ group }}</label><ul>
+        {% endif %}
         <li title="{% if description %}{{ description }}{% else %}no further description available{% endif %}"><input type="checkbox" id="{{ slug }}" x-data="{ slug: '{{ slug }}' }" x-on:click="toggle_filter(slug)" /> <label>{{ label }}</label></li>
+        {% if loop.last %}
+        </ul></li></ul>
         {% endif %}
     {% endfor %}
-    </ul></li></ul>
 {% endfor %}

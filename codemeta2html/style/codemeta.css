@@ -550,7 +550,26 @@ body.page div.cards div.card {
 div.screenshots img {
     max-width: 800px;
 }
-div.toc, div#filters {
+div.tab-controls {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+}
+div.tab-controls label {
+    background: #e3e3e7b0;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    padding: 10px;
+    margin: 0px;
+    font-weight: bold;
+    font-size: 1.1em;
+    cursor: pointer;
+}
+div.tab-controls label.activetab {
+    border-bottom: 3px solid #000c48;
+}
+div.tab-panel {
     width: 90%;
     border: none;
     border-radius: 20px;
