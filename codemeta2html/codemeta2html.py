@@ -66,6 +66,10 @@ def main():
         os.makedirs(os.path.join(args.outputdir, "table"), exist_ok=True)
         with open(os.path.join(args.outputdir, "table", "index.html"),'w',encoding='utf-8') as fp:
             fp.write(doc)
+        doc = serialize_to_html(g, res, args, contextgraph, None, indextemplate="serviceindex.html")
+        os.makedirs(os.path.join(args.outputdir, "services"), exist_ok=True)
+        with open(os.path.join(args.outputdir, "services", "index.html"),'w',encoding='utf-8') as fp:
+            fp.write(doc)
         for res,_,_ in resources:
             assert isinstance(res, URIRef)
             print(f"Writing resource {res}", file=sys.stderr)

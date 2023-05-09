@@ -3,45 +3,8 @@
     <head>
         {% include "head.html" %}
     </head>
-    <body class="cards" {% if buildsite %}x-data="{ 
-        filters: {},
-        toggle_filter(filter) {
-            let group = filter.split('_')[0];
-            if (!(group in this.filters)) {
-                this.filters[group] = [];
-            }
-            if (this.filters[group].includes(filter)) {
-                this.filters[group] = this.filters[group].filter(x => x != filter);
-                if (this.filters[group].length == 0) {
-                    delete this.filters[group];
-                }
-            } else {
-                this.filters[group].push(filter);
-            }
-        },
-        clear_filters() {
-            document.querySelectorAll('input[type=checkbox]:checked').forEach((checkbox) => { checkbox.checked = false; this.toggle_filter(checkbox.id); });
-        },
-        check_filter(filterables) {
-            for (const [group, filters_in_group] of Object.entries(this.filters)) {
-                if (group in filterables) {
-                    var found = false;
-                    for (const filter of filters_in_group) {
-                        if (this.filterables[group].includes(filter)) {
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) {
-                        return false;
-                    }
-                } else {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }"{% endif %}>
+
+    {% include "cardindex_body.html" %}
         {% include "header.html" %}
         <div class="cardcontainer">
          <div class="margincolumn">

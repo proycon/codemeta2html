@@ -1,4 +1,8 @@
-<div about="{{ targetres }}" class="card service" typeof="schema:SoftwareApplication">
+<div about="{{ targetres }}"
+    class="card service" {% if buildsite %}x-data="{
+    filterables: {{ get_filters(g,res,contextgraph, True) }}
+}" x-show="check_filter(filterables)"{% endif %} typeof="schema:SoftwareApplication">
+
     <div class="topbar">
         <div class="developmentStatus" property="codemeta:developmentStatus">
             <ul>

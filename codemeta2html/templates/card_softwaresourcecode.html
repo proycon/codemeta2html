@@ -1,4 +1,5 @@
-<div id="{{ g.value(res, SDO.identifier) }}" about="{{ res }}" class="card softwaresourcecode" {% if buildsite %}x-data="{
+<div id="{{ g.value(res, SDO.identifier) }}" about="{{ res }}" 
+    class="card softwaresourcecode" {% if buildsite %}x-data="{
     filterables: {{ get_filters(g,res,contextgraph, True) }}
 }" x-show="check_filter(filterables)"{% endif %} typeof="schema:SoftwareSourceCode">
     <div class="topbar">
