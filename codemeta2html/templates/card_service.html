@@ -1,5 +1,5 @@
 <div about="{{ targetres }}"
-    class="card service" {% if buildsite %}x-data="{
+    class="card service" {% if buildsite and filterable %}x-data="{
     filterables: {{ get_filters(g,res,contextgraph, True) }}
 }" x-show="check_filter(filterables)"{% endif %} typeof="schema:SoftwareApplication">
 
