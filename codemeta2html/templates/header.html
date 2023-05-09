@@ -25,4 +25,5 @@
     </div>
     {% endif %}
 </div>
+<div id="toplink" onclick="window.scrollTo(0, 0);" {% if buildsite %}x-data="{ showtoplink: false }" x-show="showtoplink" x-on:scroll.window="showtoplink = (window.pageYOffset > 25);"{% endif %}>⇧</div>
 {% endif %}

@@ -596,3 +596,13 @@ div#filters>ul>li>ul>li>label {
     font-weight: normal;
     cursor: help;
 }
+div#toplink {
+    position: fixed;
+    bottom: 50%;
+    left: 5px;
+    background: #000c48;
+    color: white;
+    font-size: 2em;
+    border-radius: 20px;
+    cursor: pointer;
+}
