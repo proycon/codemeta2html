@@ -9,7 +9,7 @@ import json
 from hashlib import md5
 from rdflib import Graph, URIRef, BNode, Literal
 #pyri
-from rdflib import RDF, SKOS, RDFS #type: ignore
+from rdflib import RDF, SKOS, RDFS, DCTERMS #type: ignore
 from typing import Union, IO, Optional, Sequence, Iterator
 from itertools import chain
 
@@ -281,7 +281,7 @@ def get_filters(
     g: Graph, res: Union[URIRef, None], contextgraph: Graph, json_filterables=False
 ) -> Union[str, list]:
     classes = defaultdict(set)
-    sort_order = ["interfacetype", "developmentstatus","trl", "category", "keywords"]
+    sort_order = ["interfacetype", "developmentstatus","trl", "category"]
     for interfacetype, description in get_interface_types(
         g, res, contextgraph, fallback=True
     ):
@@ -299,57 +299,62 @@ def get_filters(
 
     for _, _, devstatres in g.triples((res, CODEMETA.developmentStatus, None)):
         if str(devstatres).startswith(REPOSTATUS):
-            group_id = "developmentstatus"
-            group_label = "Development status"
+            filter_id = "developmentstatus"
+            filter_label = "Development status"
         elif str(devstatres).startswith(TRL):
-            group_id = "trl"
-            group_label = "Technology Readiness Level"
+            filter_id = "trl"
+            filter_label = "Technology Readiness Level"
         else:
             continue
         if json_filterables:
-            classes[group_id].add(
-                slugify(str(devstatres), group_id)
+            classes[filter_id].add(
+                slugify(str(devstatres), filter_id)
             )
         else:
-            if (devstatres, SKOS.prefLabel, None) in contextgraph:
-                devstatlabel = contextgraph.value(devstatres, SKOS.prefLabel)
-            else:
-                devstatlabel = str(devstatres)
-            if (devstatres, SKOS.definition, None) in contextgraph:
-                devstatdesc = contextgraph.value(devstatres, SKOS.definition)
-            else:
-                devstatdesc = ""
-            classes[group_id].add(
+            devstatlabel = get_label(contextgraph, devstatres) #type: ignore
+            devstatdesc = get_description(contextgraph, devstatres) #type: ignore
+            classes[filter_id].add(
                 (
-                    slugify(str(devstatres), group_id),
+                    slugify(str(devstatres), filter_id),
                     devstatlabel,
                     devstatdesc,
-                    group_label,
+                    filter_label,
                 )
             )
 
     for _, _, catres in g.triples((res, SDO.applicationCategory, None)):
-        if json_filterables:
-            classes["category"].add(slugify(str(catres), "category"))
+        if not isinstance(catres, URIRef) and str(catres).startswith("http"): #this is a bit of an ugly patch, shouldn't be needed
+            catres = URIRef(catres) #type: ignore
+        if (catres, SKOS.inScheme, None) in contextgraph:
+            scheme = contextgraph.value(catres, SKOS.inScheme)
+            if not isinstance(scheme, URIRef) and str(scheme).startswith("http"): #this is a bit of an ugly patch, shouldn't be needed
+                scheme = URIRef(scheme) #type: ignore
+            filter_id = md5(str(scheme).encode('utf-8')).hexdigest()
+            if not json_filterables:
+                filter_label = get_label(contextgraph,scheme) #type: ignore  
+                if filter_label == str(scheme):
+                    filter_label = f"Category ({str(scheme)})"
+                if filter_id not in sort_order:
+                    sort_order.insert(sort_order.index("category"), filter_id)
         else:
-            if (catres, SKOS.prefLabel, None) in contextgraph:
-                catlabel = contextgraph.value(catres, SKOS.prefLabel)
-            else:
-                catlabel = str(catres)
-            if (catres, SKOS.definition, None) in contextgraph:
-                catdesc = contextgraph.value(catres, SKOS.definition)
-            else:
-                catdesc = ""
-            classes["category"].add(
-                (slugify(str(catres), "category"), catlabel, catdesc, "Category")
+            filter_id = "category"
+            filter_label = "Category (any scheme)"
+        if json_filterables:
+            classes[filter_id].add(slugify(str(catres), filter_id))
+        else:
+            catlabel = get_label(contextgraph, catres) #type: ignore
+            catdesc = get_description(contextgraph, catres) #type: ignore
+            classes[filter_id].add(
+                (slugify(str(catres), filter_id), catlabel, catdesc, filter_label) #type: ignore
             )
 
+    sort_order.append("keywords")
     for _, _, keyword in g.triples((res, SDO.keywords, None)):
         if json_filterables:
-            classes["keywords"].add(slugify(str(keyword), "keyword"))
+            classes["keywords"].add(slugify(str(keyword), "keywords"))
         else:
             classes["keywords"].add(
-                (slugify(str(keyword), "keyword"), str(keyword).lower(), "", "Keywords")
+                (slugify(str(keyword), "keywords"), str(keyword).lower(), "", "Keywords")
             )
 
     if json_filterables:
@@ -365,6 +370,28 @@ def get_filters(
             classes[key] = l #type: ignore
 
         return sorted(classes.items(), key=lambda x: sort_order.index(x[0]))
+
+def get_label(g: Graph, res: URIRef) -> str:
+    if (res, SKOS.prefLabel, None) in g:
+        return str(g.value(res, SKOS.prefLabel))
+    elif (res, SKOS.altLabel, None) in g:
+        return str(g.value(res, SKOS.altLabel))
+    elif (res, SDO.name, None) in g:
+        return str(g.value(res, SDO.name))
+    elif (res, DCTERMS.title, None) in g:
+        return str(g.value(res, DCTERMS.title))
+    elif (res, RDFS.label, None) in g:
+        return str(g.value(res, RDFS.label))
+    return str(res)
+
+def get_description(g: Graph, res: URIRef) -> str:
+    if (res, SKOS.definition, None) in g:
+        return str(g.value(res, SKOS.definition))
+    elif (res, SDO.description, None) in g:
+        return str(g.value(res, SDO.description))
+    elif (res, DCTERMS.description, None) in g:
+        return str(g.value(res, DCTERMS.description))
+    return ""
 
 
 def slugify(s: str, prefix: str) -> str:
