@@ -33,7 +33,7 @@ setup(
     ],
     zip_safe=False,
     include_package_data=True,
-    package_data = { 'codemeta2html': ['templates/*.html','style/*.css', 'style/fa-*' ] },
+    package_data = { 'codemeta2html': ['templates/*.html','style/*.css', 'style/fa-*', 'style/*.js' ] },
     install_requires=[ 'codemetapy','Jinja2 >= 2.9', 'rdflib'],
     entry_points = {    'console_scripts': [ 'codemeta2html = codemeta2html.codemeta2html:main' ] },
 )
