@@ -21,11 +21,12 @@ def main():
     parser.add_argument('-b', '--baseuri',type=str,help="Base URI for loaded SoftwareSourceCode instances (make sure to add a trailing slash)", action='store',required=False)
     parser.add_argument('-B', '--baseurl',type=str,help="Base URL (absolute) in HTML visualizations (make sure to add a trailing slash)", action='store',required=False)
     parser.add_argument('--intro', type=str, help="Set extra text (HTML) to add to the index page as an introduction", action='store',required=False)
-    parser.add_argument('--css',type=str, help="Associate a CSS stylesheet (URL) with the HTML output, multiple stylesheets can be separated by a comma. This will override the internal stylesheet (add style/codemeta.css and style/fontawesome.css if you want to use it still)", action='store',  required=False)
+    parser.add_argument('--css',type=str, help="Associate a CSS stylesheet (URL) with the HTML output, multiple stylesheets can be separated by a comma. This will override the internal stylesheet (add codemeta.css and fontawesome.css if you want to use it still)", action='store',  required=False)
     parser.add_argument('--no-cache',dest="no_cache", help="Do not cache context files, force redownload", action='store_true',  required=False)
     parser.add_argument('--title', type=str, help="Title to add when generating HTML pages", action='store')
     parser.add_argument('--identifier-from-file', dest='identifier_from_file', help="Derive the identifier from the filename/module name passed to codemetapy, not from the metadata itself", action='store_true',required=False)
     parser.add_argument('--outputdir', type=str,help="Output directory where HTML files are written", action='store',required=False, default="build")
+    parser.add_argument('--styledir', type=str,help="Relative path where to serve style directory", action='store',required=False, default="style")
     parser.add_argument('--stdout', help="Output HTML for a single resource to stdout, do not write to outputdir", action='store_true',required=False)
     parser.add_argument('--no-assets',dest="no_assets", help="Do not copy static assets (CSS, fonts) to the output directory", action='store_true',  required=False)
     parser.add_argument('--serve', type=int,help="Serves the static website on localhost on the specified port, for development purposes only", action='store',required=False)
@@ -35,7 +36,8 @@ def main():
     if args.css:
         args.css = [ x.strip() for x in args.css.split(",") ]
     else:
-        args.css = ["style/codemeta.css","style/fontawesome.css"]
+        #relative to args.styledir
+        args.css = [ "codemeta.css","fontawesome.css" ]
 
     g, res, args, contextgraph = load(*args.files, **args.__dict__, buildsite=not args.stdout)
     assert isinstance(args.outputdir,str)

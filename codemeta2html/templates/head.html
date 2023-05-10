@@ -16,8 +16,12 @@
         {% endif %}
         </title>
         {% if css %}
-        {% for css_url in css %}
-        <link href="{{ css_url }}" rel="stylesheet" />
+        {% for css_file in css %}
+        {% if css_file.startswith("http") %}
+        <link href="{{ css_file }}" rel="stylesheet" />
+        {% else %}
+        <link href="{{ styledir }}/{{ css_file }}" rel="stylesheet" />
+        {% endif %}
         {% endfor %}
         {% endif %}
         {% if res %}
@@ -51,6 +55,6 @@
         {% endif %}
         <meta name="generator" content="codemeta2html {{ get_version("codemeta2html") }}, codemetapy {{ get_version("codemetapy") }}" />
         {% if buildsite %}
-        <script defer src="style/alpine.min.js"></script>
+        <script defer src="{{ styledir }}/alpine.min.js"></script>
         {% endif %}
 
