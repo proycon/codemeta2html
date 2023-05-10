@@ -341,6 +341,10 @@ div.card, div.intro {
     margin-left: auto;
     margin-right: auto;
 }
+div.intro {
+    max-width: 800px;
+    margin-top: 10px;
+}
 div.card h2, div.intro h2 {
     color: #000c48;
     margin-bottom: 2px;
