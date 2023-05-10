@@ -13,6 +13,9 @@
         </div>
     </div>
 
+    <div class="flexcard">
+    <div class="body">
+
     {% if (targetres, SDO.thumbnailUrl, None) in g %}
     <img class="thumbnail" src="{{ g.value(res, SDO.thumbnailUrl) }}" alt="thumbnail/logo" />
     {% elif (res, SDO.thumbnailUrl, None) in g %}
@@ -199,6 +202,7 @@
             {% endif %}
         {% endfor %}
     </div>
+    </div>
 
     <div class="links">
         <ul>
@@ -227,6 +231,8 @@
 
         </ul>
     </div>
+    </div>
+
 
     <div class="dateCreated">
         {% if  (targetres, SDO.dateCreated, None) in g %}

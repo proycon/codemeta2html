@@ -56,10 +56,10 @@ div.rightcolumn {
 }
 
 div.margincolumn {
-    flex: 30%;
+    flex: 20%;
 }
 div.maincolumn {
-    flex: 70%;
+    flex: 80%;
 }
 
 @media screen and (max-width: 600px) {
@@ -146,6 +146,9 @@ div.go a {
 }
 div.go i {
     font-size: 200%;
+}
+li.go i.fa {
+    color: white;
 }
 div.go strong {
     font-size: 125%;
@@ -318,7 +321,8 @@ a:hover {
 
 div.card, div.intro {
     min-width: 320px;
-    max-width: 640px;
+    width: 90%;
+    max-width: 1200px;
     border: 1px solid #cbdfe5;
     border-radius: 20px;
     background: #fff;
@@ -372,9 +376,11 @@ div.card div.interface li {
 div.card div.description {
     margin-top: 5px;
     margin-bottom: 5px;
+    text-align: left;
 }
 div.card div.minilinks {
-    float: right;
+    text-align: right;
+    padding-right: 5px;
 }
 div.card div.links {
     margin-top: 2px;
@@ -387,8 +393,11 @@ div.card div.links li {
     display: block;
     border-radius: 5px;
     margin-bottom: 2px;
-    background: #cbdfe5;
-    padding: 3px;
+    background: #d1e1e6;
+    padding: 8px;
+    padding-top: 0px;
+    text-align: left;
+    cursor: pointer;
 }
 div.card div.links a {
     font-weight: bold;
@@ -400,7 +409,7 @@ div.card div.links li:hover {
     border: 1px #bb0138 solid;
 }
 div.card div.links li.go {
-    background: #2350ff;
+    background: #1f368e;
 }
 div.card div.links li:hover {
     background: #bb0138;
@@ -408,7 +417,7 @@ div.card div.links li:hover {
 div.card div.links li.go span.description {
     color: #ccc;
 }
-div.card div.links li.go a, div.card div.links li.go a:visited, div.card div.links li:hover, div.card div.links li:hover a {
+div.card div.links li.go a, div.card div.links li.go a:visited, div.card div.links li:hover, div.card div.links li:hover a, div.card div.links li:hover i.fa {
     color: white;
 }
 div.card div.author ul, div.card div.producer ul, div.provider ul {
@@ -515,14 +524,12 @@ div.group>h2 {
     max-width: 640px;
     text-align: left;
     color: #000c48;
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: 20px;
 }
 div.group {
     border-top: 1px #000c48 solid;
     border-bottom: 1px #000c48 solid;
-    border-left: 1px #000c48 solid;
-    border-left: 1px #000c48 solid;
+    border-left: 2px #000c48 dashed;
     border-radius: 20px;
     background: #b0b0c661;
     margin-bottom: 5px;
@@ -606,4 +613,26 @@ div#toplink {
     font-size: 2em;
     border-radius: 20px;
     cursor: pointer;
+}
+
+div.flexcard {
+    display: flex;
+}
+div.card div.body {
+    flex: 60%;
+}
+div.card div.links {
+    flex: 40%;
+}
+div.links>ul>li::before {
+    content: "»";
+    padding-right: 5px;
+    color: #688789;
+    font-size: 2em;
+}
+div.links>ul>li.go::before, div.links>ul>li:focus::before{
+    content: "»";
+    padding-right: 5px;
+    color: white;
+    font-size: 2em;
 }

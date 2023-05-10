@@ -21,6 +21,8 @@
             </ul>
         </div>
     </div>
+   <div class="flexcard">
+   <div class="body">
 
     {% if (res, SDO.thumbnailUrl, None) in g %}
     <img class="thumbnail" src="{{ g.value(res, SDO.thumbnailUrl) }}" alt="thumbnail/logo" rel="schema:thumbnailUrl" />
@@ -190,7 +192,8 @@
         {% endfor %}
     </div>
 
-    <div class="links">
+   </div>
+   <div class="links">
         <ul>
         {% for _,_, value in g.triples((res, SDO.url, None)) %}
         {% if str(value).find("/pypi.org") != -1 %} <li><i class="fa fa-box"></i>&nbsp;<a rel="schema:url" href="{{ value }}" title="This is the project's entry in the Python Package Index">Package website (Python Package Index)</a></li>
@@ -257,7 +260,8 @@
         {% endfor %}
 
         </ul>
-    </div>
+   </div>
+  </div>
 
     {% if  (res, SDO.dateCreated, None) in g %}
     <div class="dateCreated">
