@@ -8,7 +8,8 @@ import re
 import json
 from hashlib import md5
 from rdflib import Graph, URIRef, BNode, Literal
-from rdflib.namespace import RDF, SKOS, RDFS
+#pyri
+from rdflib import RDF, SKOS, RDFS #type: ignore
 from typing import Union, IO, Optional, Sequence, Iterator
 from itertools import chain
 
@@ -19,31 +20,18 @@ else:
 from codemeta.common import (
     AttribDict,
     REPOSTATUS,
-    license_to_spdx,
     SDO,
     CODEMETA,
     SOFTWARETYPES,
     SOFTWAREIODATA,
     TRL,
     CODEMETAPY,
-    SCHEMA_SOURCE,
-    CODEMETA_SOURCE,
-    SCHEMA_LOCAL_SOURCE,
-    SCHEMA_SOURCE,
-    CODEMETA_LOCAL_SOURCE,
-    CODEMETA_SOURCE,
-    STYPE_SOURCE,
-    STYPE_LOCAL_SOURCE,
-    init_context,
-    SINGULAR_PROPERTIES,
     ORDEREDLIST_PROPERTIES,
-    get_subgraph,
     get_last_component,
     query,
     iter_ordered_list,
     get_doi,
 )
-from codemeta2html import __path__ as rootpath
 import codemeta.parsers.gitapi
 from jinja2 import Environment, FileSystemLoader
 
@@ -165,7 +153,7 @@ def get_index(g: Graph, restype=SDO.SoftwareSourceCode):
         if not label:
             label = g.value(res, SDO.identifier)
             if label:
-                label = label.strip("/ \n").capitalize()
+                label = str(label).strip("/ \n").capitalize()
             else:
                 label = "~untitled"
 
@@ -195,7 +183,7 @@ def is_resource(res) -> bool:
 
 
 def get_badge(g: Graph, res: Union[URIRef, None], key):
-    source = g.value(res, SDO.codeRepository).strip("/")
+    source = str(g.value(res, SDO.codeRepository)).strip("/")
     cleaned_url = source
     prefix = ""
     if source.startswith("https://"):
@@ -225,7 +213,7 @@ def get_badge(g: Graph, res: Union[URIRef, None], key):
                     "gitlab",
                 )
                 if response:
-                    response = response.json()
+                    response = response.json() #type: ignore
                     for badge in response:
                         if badge["kind"] == "project":
                             # or rendered_image_url field?
@@ -252,10 +240,10 @@ def has_displayable_targetproducts(g: Graph, res: Union[URIRef, BNode]) -> bool:
     return False
 
 
-def type_label(g: Graph, res: Union[URIRef, None]):
+def type_label(g: Graph, res: Union[URIRef, None]) -> str:
     label = g.value(res, RDF.type)
     if label:
-        label = label.split("/")[-1]
+        label = str(label).split("/")[-1]
         return label
     else:
         return ""
@@ -358,7 +346,7 @@ def get_filters(
 
     if json_filterables:
         for key in classes:
-            classes[key] = list(
+            classes[key] = list( #type: ignore
                 classes[key]
             )  # sets are not json serializable, so make it into a list
         return json.dumps(classes, ensure_ascii=False).replace('"', "'")
@@ -366,7 +354,7 @@ def get_filters(
         for key in classes:
             l = list(classes[key])
             l.sort(key=lambda x: x[1])
-            classes[key] = l
+            classes[key] = l #type: ignore
 
         return sorted(classes.items(), key=lambda x: sort_order.index(x[0]))
 
@@ -410,6 +398,7 @@ def serialize_to_html(
     # env.policies['json.dumps_kwargs']['ensure_ascii'] = False
     # env.policies['json.dumps_function'] = to_json
     if res and not isinstance(res, (list, tuple)):
+        assert isinstance(res, URIRef) or res is None
         if (res, RDF.type, SDO.SoftwareSourceCode) in g:
             template = "page_softwaresourcecode.html"
         elif (

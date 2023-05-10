@@ -6,7 +6,7 @@ import os
 import shutil
 from codemeta.codemeta import load
 from rdflib import Graph, URIRef, BNode
-from rdflib.namespace import RDF
+from rdflib.namespace import RDF #type: ignore
 from codemeta.common import CODEMETA, AttribDict, getstream, SDO
 from codemeta2html.html import serialize_to_html
 
