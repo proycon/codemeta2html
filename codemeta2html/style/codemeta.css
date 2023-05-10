@@ -582,9 +582,11 @@ div.tab-controls label {
     font-weight: bold;
     font-size: 1.1em;
     cursor: pointer;
+    color: #666;
 }
 div.tab-controls label.activetab {
-    border-bottom: 3px solid #000c48;
+    border-bottom: 3px solid #1f368e;
+    color: black;
 }
 div.tab-panel {
     width: 90%;
@@ -647,4 +649,7 @@ div.links>ul>li.go::before, div.links>ul>li:focus::before{
 }
 li.go a tt {
     text-align: center;
+}
+div.leftcolumn div.cards {
+    width: 95%;
 }
