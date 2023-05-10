@@ -6,7 +6,7 @@ import os
 import shutil
 from codemeta.codemeta import load
 from rdflib import Graph, URIRef, BNode
-from rdflib.namespace import RDF #type: ignore
+from rdflib.namespace import RDF  # type: ignore
 from codemeta.common import CODEMETA, AttribDict, getstream, SDO
 from codemeta2html.html import serialize_to_html
 
@@ -105,6 +105,13 @@ def main():
         type=int,
         help="Serves the static website on localhost on the specified port, for development purposes only",
         action="store",
+        required=False,
+    )
+    parser.add_argument(
+        "--addcontext",
+        dest="addcontextgraph",
+        help="Add the specified jsonld (must be a URL) to the context graph. May be specified multiple times.",
+        action="append",
         required=False,
     )
     parser.add_argument(

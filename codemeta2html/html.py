@@ -281,7 +281,7 @@ def get_filters(
     g: Graph, res: Union[URIRef, None], contextgraph: Graph, json_filterables=False
 ) -> Union[str, list]:
     classes = defaultdict(set)
-    sort_order = ["interfacetype", "developmentstatus", "category", "keywords"]
+    sort_order = ["interfacetype", "developmentstatus","trl", "category", "keywords"]
     for interfacetype, description in get_interface_types(
         g, res, contextgraph, fallback=True
     ):
@@ -298,9 +298,17 @@ def get_filters(
             )
 
     for _, _, devstatres in g.triples((res, CODEMETA.developmentStatus, None)):
+        if str(devstatres).startswith(REPOSTATUS):
+            group_id = "developmentstatus"
+            group_label = "Development status"
+        elif str(devstatres).startswith(TRL):
+            group_id = "trl"
+            group_label = "Technology Readiness Level"
+        else:
+            continue
         if json_filterables:
-            classes["developmentstatus"].add(
-                slugify(str(devstatres), "developmentstatus")
+            classes[group_id].add(
+                slugify(str(devstatres), group_id)
             )
         else:
             if (devstatres, SKOS.prefLabel, None) in contextgraph:
@@ -311,12 +319,12 @@ def get_filters(
                 devstatdesc = contextgraph.value(devstatres, SKOS.definition)
             else:
                 devstatdesc = ""
-            classes["developmentstatus"].add(
+            classes[group_id].add(
                 (
-                    slugify(str(devstatres), "developmentstatus"),
+                    slugify(str(devstatres), group_id),
                     devstatlabel,
                     devstatdesc,
-                    "Development status",
+                    group_label,
                 )
             )
 
