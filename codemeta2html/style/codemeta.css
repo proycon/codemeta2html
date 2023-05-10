@@ -63,9 +63,12 @@ div.maincolumn {
     flex: 80%;
 }
 
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 600px) {
     div.leftcolumn, div.rightcolumn {
         flex: 100%;
+    }
+    div.margincolumn {
+        display: none;
     }
 }
 
