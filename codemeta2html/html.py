@@ -79,29 +79,15 @@ def get_triples(
                     pos = int(pos) if pos.isnumeric() else 9999
             label = None
             for p in labelprop:
-                for _, _, candidate in g.triples((res2, p, None)):
-                    if isinstance(candidate, Literal) and candidate.language in (
-                        None,
-                        "en",
-                    ):  # hard-coded english for now
-                        label = candidate
-                        break
+                label = get_english_value(g,res2,p) #type: ignore
                 if label:
                     break
                 elif contextgraph:
-                    for _, _, candidate in contextgraph.triples((res2, p, None)):
-                        if isinstance(candidate, Literal) and candidate.language in (
-                            None,
-                            "en",
-                        ):  # hard-coded english for now
-                            label = candidate
-                            break
-                    if label:
-                        break
+                    label = get_english_value(contextgraph,res2,p) #type: ignore
             if label:
-                results.append((label, res2, pos, _get_sortkey2(g, res2)))
+                results.append((label, res2, pos, _get_sortkey2(g, res2))) #type: ignore
             else:
-                results.append((str(res2), res2, pos, _get_sortkey2(g, res2)))
+                results.append((str(res2), res2, pos, _get_sortkey2(g, res2))) #type: ignore
         if max and len(results) >= max:
             break
     if havepos:
@@ -117,15 +103,6 @@ def get_triples(
     return [tuple(x[:2]) for x in results]
 
 
-def get_description(contextgraph: Graph, res: Union[URIRef, BNode, None]):
-    """Gets the skos:note for a specific resource"""
-    for _, _, candidate in contextgraph.triples((res, SKOS.note, None)):
-        if isinstance(candidate, Literal) and candidate.language in (
-            None,
-            "en",
-        ):  # hard-coded english for now
-            return candidate
-    return ""
 
 
 def _get_sortkey2(g: Graph, res: Union[URIRef, BNode, None]):
@@ -323,7 +300,7 @@ def get_filters(
             )
 
     for _, _, catres in g.triples((res, SDO.applicationCategory, None)):
-        if not isinstance(catres, URIRef) and str(catres).startswith("http"): #this is a bit of an ugly patch, shouldn't be needed
+        if not isinstance(catres, URIRef) and str(catres).startswith("http"): #this is a bit of an ugly patch, shouldn't be neede
             catres = URIRef(catres) #type: ignore
         if (catres, SKOS.inScheme, None) in contextgraph:
             scheme = contextgraph.value(catres, SKOS.inScheme)
@@ -334,11 +311,13 @@ def get_filters(
                 filter_label = get_label(contextgraph,scheme) #type: ignore  
                 if filter_label == str(scheme):
                     filter_label = f"Category ({str(scheme)})"
+                else:
+                    filter_label = f"Category ({filter_label})"
                 if filter_id not in sort_order:
                     sort_order.insert(sort_order.index("category"), filter_id)
         else:
             filter_id = "category"
-            filter_label = "Category (any scheme)"
+            filter_label = "Category (unassorted schemes)"
         if json_filterables:
             classes[filter_id].add(slugify(str(catres), filter_id))
         else:
@@ -371,26 +350,28 @@ def get_filters(
 
         return sorted(classes.items(), key=lambda x: sort_order.index(x[0]))
 
+
+def get_english_value(g: Graph, s: Union[URIRef,BNode], p: URIRef, default="") -> str:
+    result = default
+    for _,_,candidate in g.triples((s,p,None)):
+        if isinstance(candidate, Literal) and candidate.language in (None,'en'): #hard-coded english for now
+            result = candidate
+            break
+    return result
+
+
 def get_label(g: Graph, res: URIRef) -> str:
-    if (res, SKOS.prefLabel, None) in g:
-        return str(g.value(res, SKOS.prefLabel))
-    elif (res, SKOS.altLabel, None) in g:
-        return str(g.value(res, SKOS.altLabel))
-    elif (res, SDO.name, None) in g:
-        return str(g.value(res, SDO.name))
-    elif (res, DCTERMS.title, None) in g:
-        return str(g.value(res, DCTERMS.title))
-    elif (res, RDFS.label, None) in g:
-        return str(g.value(res, RDFS.label))
+    for prop in (SKOS.prefLabel, SKOS.altLabel, SDO.name, DCTERMS.title, RDFS.label):
+        label = get_english_value(g,res, prop)
+        if label: 
+            return label
     return str(res)
 
 def get_description(g: Graph, res: URIRef) -> str:
-    if (res, SKOS.definition, None) in g:
-        return str(g.value(res, SKOS.definition))
-    elif (res, SDO.description, None) in g:
-        return str(g.value(res, SDO.description))
-    elif (res, DCTERMS.description, None) in g:
-        return str(g.value(res, DCTERMS.description))
+    for prop in (SKOS.definition, SKOS.note, SDO.description, DCTERMS.description):
+        desc = get_english_value(g,res, prop)
+        if desc: 
+            return desc
     return ""
 
 
