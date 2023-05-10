@@ -10,7 +10,7 @@
         {% set filterable = True %}
         {% include "header.html" %}
         <div class="cardcontainer">
-         <div class="margincolumn">
+         <div class="margincolumn" x-show="sidebar">
             <div class="tab-wrapper" x-data="{ activetab: 0 }">
                 <div class="tab-controls">
                     <label {% if buildsite %}x-on:click="activetab = 0; clear_filters();" x-bind:class="{ 'activetab': activetab === 0 }"{% endif %}>Table of Contents</label>

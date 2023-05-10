@@ -57,17 +57,26 @@ div.rightcolumn {
 
 div.margincolumn {
     flex: 20%;
+    min-width: 240px;
 }
 div.maincolumn {
     flex: 80%;
 }
 
-@media screen and (max-width: 600px) {
-    div.leftcolumn div.rightcolumn {
+@media screen and (max-width: 500px) {
+    div.leftcolumn, div.rightcolumn {
         flex: 100%;
     }
 }
 
+@media screen and (max-width: 900px) {
+    div.flexcard {
+        display: block !important;
+    }
+    div.card div.flexcard div.body, div.card div.flexcard div.links {
+        flex: none;
+    }
+}
 
 div.cardcontainer {
     display: flex;
@@ -635,4 +644,7 @@ div.links>ul>li.go::before, div.links>ul>li:focus::before{
     padding-right: 5px;
     color: white;
     font-size: 2em;
+}
+li.go a tt {
+    text-align: center;
 }

@@ -1,5 +1,6 @@
     <body class="cards" {% if buildsite %}x-data="{ 
         filters: {},
+        sidebar: true,
         toggle_filter(filter) {
             let group = filter.split('_')[0];
             if (!(group in this.filters)) {
