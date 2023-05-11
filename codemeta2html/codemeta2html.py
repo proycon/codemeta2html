@@ -108,8 +108,7 @@ def main():
         required=False,
     )
     parser.add_argument(
-        "--addcontext",
-        dest="addcontextgraph",
+        "--addcontextgraph",
         help="Add the specified jsonld (must be a URL) to the context graph. May be specified multiple times.",
         action="append",
         required=False,
