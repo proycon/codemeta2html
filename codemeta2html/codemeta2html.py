@@ -25,7 +25,7 @@ def main():
         "-b",
         "--baseuri",
         type=str,
-        help="Base URI for loaded SoftwareSourceCode instances (make sure to add a trailing slash)",
+        help="Base URI for loaded SoftwareSourceCode instances (make sure to add a trailing slash). This will rewrite the resource identifiers of the loaded data.",
         action="store",
         required=False,
     )
@@ -33,7 +33,7 @@ def main():
         "-B",
         "--baseurl",
         type=str,
-        help="Base URL (absolute) in HTML visualizations (make sure to add a trailing slash)",
+        help="Base URL (absolute) in HTML visualizations (make sure to add a trailing slash). Not required, things should also work with relative paths only when left unset.",
         action="store",
         required=False,
     )

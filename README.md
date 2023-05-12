@@ -54,7 +54,7 @@ be properly label. The use of SKOS vocabularies is supported and encouraged.
 Consider the following example for the CLARIAH project:
 
 `
-$ codemeta2html --baseuri https://tools.clariah.nl/ --addcontextgraph https://w3id.org/nwo-research-fields --addcontextgraph https://raw.githubusercontent.com/CLARIAH/tool-discovery/master/schemas/research-technology-readiness-levels.jsonld --addcontextgraph https://vocabs.dariah.eu/rest/v1/tadirah/data\?format\=text/turtle data.json
+$ codemeta2html --title "CLARIAH Tools" --baseuri https://tools.clariah.nl/ --addcontextgraph https://w3id.org/nwo-research-fields --addcontextgraph https://raw.githubusercontent.com/CLARIAH/tool-discovery/master/schemas/research-technology-readiness-levels.jsonld --addcontextgraph https://vocabs.dariah.eu/rest/v1/tadirah/data\?format\=text/turtle data.json
 `
 
 The `--baseuri` parameter will adapt all resource identifiers to a single
