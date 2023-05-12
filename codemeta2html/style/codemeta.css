@@ -347,6 +347,7 @@ div.card, div.intro {
 div.intro {
     max-width: 800px;
     margin-top: 10px;
+    text-align: left;
 }
 div.card h2, div.intro h2 {
     color: #000c48;
