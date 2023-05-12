@@ -4,8 +4,29 @@
  
 # Codemeta2html
 
-Codemeta2html is a command-line tool and software library to visualize software metadata in the [codemeta](https://codemeta.github.io) standard.
-This library build on [codemetapy](https://github.com/proycon/codemetapy).
+## Introduction
+
+Codemeta2html is a command-line tool and software library to visualize software
+metadata in the [codemeta](https://codemeta.github.io) standard. This library
+builds on [codemetapy](https://github.com/proycon/codemetapy).
+
+### Features
+
+* Generates a complete static website with:
+    * index pages (card view & table view)
+    * one dedicated page per software source project
+    * client-side filtering (faceted search) capabilities
+    * direct access to the underlying JSON-LD and Turtle serialisations per source project and for the complete data graph as a whole
+    * useful in combination with [codemeta-harvester](https://github.com/proycon/codemeta-harvester) to visualize the results of the harvest
+
+### Notes
+
+1. This solution is designed to work well with tens or hundreds of
+resources (software projects), it does not scale well beyond that to thousands
+of resources.
+2. If you want a server-side solution that allows for live querying (using SPARQL),
+then use [codemeta-server](https://github.com/proycon/codemeta-server) instead
+(which has this project as main dependency).
 
 ## Installation
 
@@ -13,11 +34,37 @@ This library build on [codemetapy](https://github.com/proycon/codemetapy).
 
 ## Usage
 
-You can pass either a JSON-LD file describing a single software project:
+You can pass either a JSON-LD file describing a single software project and
+have it output to standard output:
 
-`$ codemeta2html yoursoftware.codemeta.json > yoursoftware.html`
+`$ codemeta2html --stdout yoursoftware.codemeta.json > yoursoftware.html`
 
-You can pass a full JSON-LD graph describing multiple projects, effectively using `codemeta2html` to generate a static website:
+Or you can pass a full JSON-LD graph describing multiple projects, effectively
+using `codemeta2html` to generate a static website:
 
 `$ codemeta2html --outputdir build/ yoursoftware.codemeta.json`
 
+This is the default behaviour, it also works on an input file for  single
+software project although it may be overkill there.
+
+
+You can pass additional linked data to the context graph, this is used for
+vocabularies that are referenced by the software metadata and ensures they can
+be properly label. The use of SKOS vocabularies is supported and encouraged.
+Consider the following example for the CLARIAH project:
+
+`
+$ codemeta2html --baseuri https://tools.clariah.nl/ --addcontextgraph https://w3id.org/nwo-research-fields --addcontextgraph https://raw.githubusercontent.com/CLARIAH/tool-discovery/master/schemas/research-technology-readiness-levels.jsonld --addcontextgraph https://vocabs.dariah.eu/rest/v1/tadirah/data\?format\=text/turtle data.json
+`
+
+The `--baseuri` parameter will adapt all resource identifiers to a single
+common URI, which does not necessarily have to be the same as the URL the pages
+are served from (you can use ``--baseurl`` for that).
+
+
+## Acknowledgement
+
+This work is conducted at the [KNAW Humanities Cluster](https://huc.knaw.nl/)'s
+[Digital Infrastructure department](https://di.huc.knaw.nl/) in the scope of the 
+[CLARIAH](https://www.clariah.nl) project (CLARIAH-PLUS, NWO grant 184.034.023) as
+part of the FAIR Tool Discovery track of the Shared Development Roadmap.
