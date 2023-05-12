@@ -26,8 +26,8 @@
         {% endif %}
         {% if res %}
         {% if baseuri and buildsite %}
-        <link rel="alternate" type="application/json+ld" href="{{ res }}.json" />
-        <link rel="alternate" type="text/turtle" href="{{ res }}.ttl" />
+        <link rel="alternate" type="application/json+ld" href="{{ link_resource(g,res,baseuri,'json') }}" />
+        <link rel="alternate" type="text/turtle" href="{{ link_resource(g,res,baseuri,'ttl') }}" />
         {% endif %}
         <meta property="og:type" content="website" />
         {% if (res, SDO.name, None) in g %}

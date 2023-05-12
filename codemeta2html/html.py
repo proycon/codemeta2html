@@ -496,7 +496,7 @@ def to_json(o, **kwargs):
     return result
 
 
-def link_resource(g: Graph, res: URIRef, baseuri: Optional[str]) -> str:
+def link_resource(g: Graph, res: URIRef, baseuri: Optional[str], format="html") -> str:
     """produces a link to a resource page"""
     link = str(res)  # fallback
     if baseuri:
@@ -511,4 +511,6 @@ def link_resource(g: Graph, res: URIRef, baseuri: Optional[str]) -> str:
             link = "/".join(str(res).split("/")[3:])
     if link and link[-1] != "/":
         link += "/"
+    if format != "html":
+        link += f"data.{format}"
     return link

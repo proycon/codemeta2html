@@ -13,10 +13,16 @@ builds on [codemetapy](https://github.com/proycon/codemetapy).
 ### Features
 
 * Generates a complete static website with:
+    * rich [RDFa](https://www.w3.org/TR/rdfa-primer/) data (codemeta/schema.org/etc) embedded in the HTML,
+      expressing as much of the input linked data as possible. This means though we visualise for humans, we do 
+      not sacrifice on machine parsability and semantic interpretability.
     * index pages (card view & table view)
     * one dedicated page per software source project
     * client-side filtering (faceted search) capabilities
     * direct access to the underlying JSON-LD and Turtle serialisations per source project and for the complete data graph as a whole
+    * responsive layout suitable for different devices and screen-sizes
+    * minimal amount of external web calls (only for github/gitlab badges and for external resources references directly by the software metadata itself)
+    * minimal client-side javascript, also usable without (except for filtering)
     * useful in combination with [codemeta-harvester](https://github.com/proycon/codemeta-harvester) to visualize the results of the harvest
 
 ### Notes
@@ -48,9 +54,9 @@ This is the default behaviour, it also works on an input file for  single
 software project although it may be overkill there.
 
 
-You can pass additional linked data to the context graph, this is used for
+You can pass additional linked data (JSON-LD or turtle) to the context graph, this is used for
 vocabularies that are referenced by the software metadata and ensures they can
-be properly label. The use of SKOS vocabularies is supported and encouraged.
+be properly labelled in the visualisation. The use of SKOS vocabularies is supported and encouraged.
 Consider the following example for the CLARIAH project:
 
 `

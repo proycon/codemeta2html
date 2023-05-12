@@ -1,0 +1,19 @@
+<html>
+<head>
+    <title>Redirecting...</title>
+</head>
+<body>
+Redirecting to latest version...
+<script>
+let loc = window.location.href;
+if (loc.endsWith(".html")) {
+    loc = loc.substring(0,loc.lastIndexOf("/")+1);
+}
+if (loc.endsWith("/")) {
+    window.location.replace(loc + "{{ targetsuffix }}");
+} else {
+    window.location.replace(loc +  "/{{ targetsuffix }}");
+}
+</script>
+</body>
+</html>

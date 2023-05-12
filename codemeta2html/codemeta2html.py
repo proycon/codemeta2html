@@ -9,6 +9,8 @@ from rdflib import Graph, URIRef, BNode
 from rdflib.namespace import RDF  # type: ignore
 from codemeta.common import CODEMETA, AttribDict, getstream, SDO
 from codemeta2html.html import serialize_to_html
+from codemeta.codemeta import serialize
+from jinja2 import Environment, FileSystemLoader
 
 
 """This library and command-line-tool visualises software metadata using codemeta as html."""
@@ -137,6 +139,14 @@ def main():
     if not isinstance(contextgraph, Graph):
         raise Exception("No contextgraph provided, required for HTML serialisation")
 
+    rootpath = sys.modules["codemeta2html"].__path__[0]
+    env = Environment(
+        loader=FileSystemLoader(os.path.join(rootpath, "templates")),
+        autoescape=True,
+        trim_blocks=True,
+        lstrip_blocks=True,
+    )
+
     resources = list(g.triples((None, RDF.type, SDO.SoftwareSourceCode)))
     if not resources:
         raise Exception("No resources found in JSON-LD graph")
@@ -179,6 +189,19 @@ def main():
             encoding="utf-8",
         ) as fp:
             fp.write(doc)
+
+
+        for format in ('json','ttl'):
+            args.output = format
+            with open(
+                os.path.join(args.outputdir, f"data.{format}"),
+                "w",
+                encoding="utf-8",
+            ) as fp:
+                out = serialize(g, None, args, contextgraph, None)
+                assert isinstance(out, str)
+                fp.write(out)
+
         for res, _, _ in resources:
             assert isinstance(res, URIRef)
             print(f"Writing resource {res}", file=sys.stderr)
@@ -201,13 +224,9 @@ def main():
                         file=sys.stderr,
                     )
                     continue
-                doc = serialize_to_html(g, res, args, contextgraph, None)
-                with open(
-                    os.path.join(resdir_with_version, "index.html"),
-                    "w",
-                    encoding="utf-8",
-                ) as fp:
-                    fp.write(doc)
+
+                outdir = resdir_with_version #actual writing deferred until after this block
+
                 # symlink latest/ to the latest version directory
                 latestdir = os.path.join(resdir, "latest")
                 if os.path.exists(latestdir):
@@ -217,16 +236,20 @@ def main():
                         shutil.rmtree(latestdir)
                 os.symlink(version, latestdir)
 
-                # (note: there is no index.html on this level yet, a symlink to a deeper index won't work because relative baseurl might break)
-            else:
-                os.makedirs(os.path.join(resdir, "snapshot"), exist_ok=True)
-                doc = serialize_to_html(g, res, args, contextgraph, None)
+                #rewrite URL if the user hits the version-less level,  a symlink to a deeper index wouldn't work because relative baseurl might break)
                 with open(
-                    os.path.join(resdir, "snapshot", "index.html"),
+                    os.path.join(resdir, "index.html"),
                     "w",
                     encoding="utf-8",
                 ) as fp:
-                    fp.write(doc)
+                    template = env.get_template("redirect.html")
+                    fp.write(template.render(
+                        targetsuffix="latest/"
+                    ))
+            else:
+                os.makedirs(os.path.join(resdir, "snapshot"), exist_ok=True)
+
+                outdir = os.path.join(resdir,"snapshot") #actual writing deferred until after this block
 
                 # symlink latest/ to the snapshot directory
                 latestdir = os.path.join(resdir, "latest")
@@ -236,6 +259,25 @@ def main():
                     else:
                         shutil.rmtree(latestdir)
                 os.symlink("snapshot", latestdir)
+
+            doc = serialize_to_html(g, res, args, contextgraph, None)
+            with open(
+                os.path.join(outdir, "index.html"),
+                "w",
+                encoding="utf-8",
+            ) as fp:
+                fp.write(doc)
+
+            for format in ('json','ttl'):
+                args.output = format
+                with open(
+                    os.path.join(outdir, f"data.{format}"),
+                    "w",
+                    encoding="utf-8",
+                ) as fp:
+                    out = serialize(g, res, args, contextgraph, None)
+                    assert isinstance(out, str)
+                    fp.write(out)
 
     if not args.no_assets:
         print(f"Copying styles", file=sys.stderr)
