@@ -29,7 +29,6 @@ div#navbar {
     min-height: 1.2em;
 }
 nav {
-    float: left;
     text-align: left;
     margin-left: 5px;
 }
@@ -687,4 +686,10 @@ div.review pre {
     padding-top: 20px;
     border-radius: 20px;
     font-size: 1.3em;
+}
+div#search {
+    display: inline;
+}
+div#search form {
+    display: inline;
 }
