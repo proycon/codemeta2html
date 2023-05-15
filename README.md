@@ -21,6 +21,7 @@ builds on [codemetapy](https://github.com/proycon/codemetapy).
     * client-side filtering (faceted search) capabilities
     * direct access to the underlying JSON-LD and Turtle serialisations per source project and for the complete data graph as a whole
     * responsive layout suitable for different devices and screen-sizes
+    * badges (aka shields) for GitHub, Repostatus
     * minimal amount of external web calls (only for github/gitlab badges and for external resources references directly by the software metadata itself)
     * minimal client-side javascript, also usable without (except for filtering)
     * useful in combination with [codemeta-harvester](https://github.com/proycon/codemeta-harvester) to visualize the results of the harvest

@@ -473,6 +473,7 @@ def serialize_to_html(
         baseuri=args.baseuri,
         baseurl=args.baseurl,
         buildsite=args.buildsite,
+        serverside=args.serverside,
         link_resource=link_resource,
         intro=args.intro,
         get_last_component=get_last_component,
