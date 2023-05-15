@@ -3,7 +3,7 @@
             {% if g.value(review, SDO.reviewRating) %}
             {% set rating = int(g.value(review, SDO.reviewRating)) %}
             <span class="rating{{ rating }}" title="Automatic software metadata rating, click to inspect validation report">
-            <a href="{{ review }}">
+            <a href="{{ link_resource(g, sscres, baseuri, anchor='reviews') }}">
             {% for _ in range(0, rating) %}
             &starf;
             {% endfor %}
@@ -14,7 +14,7 @@
             </span>
             {% else %}
             <span class="rating0" title="Automatic software metadata rating, click to inspect validation report">
-            <a href="{{ review }}">
+            <a href="{{ link_resource(g, sscres, baseuri, anchor='reviews') }}">
             &star;
             &star;
             &star;

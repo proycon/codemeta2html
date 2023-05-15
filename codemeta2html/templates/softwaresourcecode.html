@@ -75,7 +75,7 @@
 
     {% if g.value(sscres, CODEMETA.referencePublication) or g.value(sscres, SDO.citation) %}
 
-    <h3>References</h3>
+    <h3 id="references">References</h3>
 
     <div class="references">
         <ul>
@@ -98,7 +98,7 @@
     </div>
     {% endif %}
 
-    <h3>Citation</h3>
+    <h3 id="citation">Citation</h3>
 
     <p>
     {% if g.value(sscres, CODEMETA.referencePublication) or g.value(sscres, SDO.citation) %}
@@ -110,8 +110,65 @@
 
     {% include 'citation.html' %}
 
+    <h3 id="reviews">Logs &amp; Reviews</h3>
+
+    <div class="reviews">
+      {% for _,_,review in g.triples((sscres, SDO.review,None)) %}
+          <div class="review" about="{{ review }}" typeof="schema:Review">
+            <dl>
+                {% if (review, SDO.name, None) in g %}
+                <dt>Name</dt>
+                <dd property="schema:name" class="name">{{ g.value(review,SDO.name) }}</dd>
+                {% endif %}
+                {% if (review, SDO.author,None) in g %}
+                <dt>Author</dt>
+                <dd>
+                    <ul>
+                     {% for label, pores in get_triples(g, review, SDO.author) %}
+                     <li property="schema:author">
+                         {% include 'person_or_org.html' %}
+                     </li>
+                     {% endfor %}
+                    </ul>
+                </dd>
+                {% endif %}
+                {% if (review, SDO.datePublished,None) in g %}
+                <dt>Date</dt>
+                <dd property="schema:datePublished">{{ g.value(review, SDO.datePublished) }}</dd>
+                {% endif %}
+                {% if (review, SDO.reviewBody,None) in g %}
+                <dt>Review</dt>
+                <dd><pre property="schema:reviewBody">{{ g.value(review,SDO.reviewBody) }}</pre></dd>
+                {% endif %}
+                {% if (review, SDO.reviewRating,None) in g %}
+                <dt>Rating</dt>
+                <dd property="schema:reviewRating" content="{{ rating }}">
+                {% set rating = int(g.value(review, SDO.reviewRating)) %}
+                <span class="rating{{ rating }}" title="{{ rating }} star(s)">
+                {% for _ in range(0, rating) %}
+                &starf;
+                {% endfor %}
+                {% for _ in range(rating, 5) %}
+                &star;
+                {% endfor %}
+                </span>
+                {% else %}
+                <span class="rating0" title="{{ rating }} star(s)">
+                &star;
+                &star;
+                &star;
+                &star;
+                &star;
+                </span>
+                </dd>
+                {% endif %}
+            </dl>
+        </div>
+      {% endfor %}
+    </div>
 
     <div class="log">
+        {% if (res, CODEMETAPY.log, None) in g %}
         {% if (res, CODEMETAPY.errors, None) in g and int(g.value(res, CODEMETAPY.errors)) > 0 %}
         <span class="negative" title="There were problems harvesting this metadata, please inspect the log"><i class="fa fa-bug"></i>  There were {{ g.value(res, CODEMETAPY.errors) }} error(s) harvesting this metadata, please inspect the log.</span><br/>
         {% endif %}
@@ -119,6 +176,7 @@
         <pre id="harvestlog">
 {{ g.value(res, CODEMETAPY.log) }}
         </pre>
+        {% endif %}
     </div>
 
     </div>

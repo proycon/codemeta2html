@@ -184,7 +184,7 @@
           {% if str(g.value(review, SDO.name)).startswith("Automatic software metadata validation report") %}
             {% set rating = int(g.value(review, SDO.reviewRating)) %}
             <span class="rating{{ rating }}" title="Automatic software metadata rating {{rating}}/5, click to inspect validation report">
-            <a href="{{ review }}">
+            <a href="{{ link_resource(g, res, baseuri, anchor='reviews') }}">
             <i class="fa fa-star"></i>
             </a>
             </span>
