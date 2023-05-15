@@ -258,7 +258,7 @@ def get_filters(
     g: Graph, res: Union[URIRef, None], contextgraph: Graph, json_filterables=False
 ) -> Union[str, list]:
     classes = defaultdict(set)
-    sort_order = ["interfacetype", "developmentstatus","trl", "category"]
+    sort_order = ["interfacetype", "developmentstatus","trl", "metadatarating", "category"]
     for interfacetype, description in get_interface_types(
         g, res, contextgraph, fallback=True
     ):
@@ -298,6 +298,21 @@ def get_filters(
                     filter_label,
                 )
             )
+
+    if json_filterables:
+        for _, _, review in g.triples((res, SDO.review, None)):
+            if str(g.value(review, SDO.name)).startswith("Automatic software metadata validation report"):
+                if (review, SDO.reviewRating, None) in g:
+                    rating = int(g.value(review, SDO.reviewRating))
+                    classes["metadatarating"].add(slugify(str(rating), "metadatarating"))
+    else:
+        classes["metadatarating"].add((slugify("0", "metadatarating"), "0 - ☆☆☆☆☆ (worst)", "No or hardly any software metadata provided", "Metadata Quality"))
+        classes["metadatarating"].add((slugify("1", "metadatarating"), "1 - ★☆☆☆☆ (bad)", "Too little metadata has been provided", "Metadata Quality"))
+        classes["metadatarating"].add((slugify("2", "metadatarating"), "2 - ★★☆☆☆ (minimal)", "Some metadata has been provided but significant fields are missing still", "Metadata Quality"))
+        classes["metadatarating"].add((slugify("3", "metadatarating"), "3 - ★★★☆☆ (ok)", "Acceptable metadata quality", "Metadata Quality"))
+        classes["metadatarating"].add((slugify("4", "metadatarating"), "4 - ★★★★☆ (good)", "Good metadata quality", "Metadata Quality"))
+        classes["metadatarating"].add((slugify("5", "metadatarating"), "5 - ★★★★★ (best))", "Excellent metadata quality", "Metadata Quality"))
+
 
     for _, _, catres in g.triples((res, SDO.applicationCategory, None)):
         if not isinstance(catres, URIRef) and str(catres).startswith("http"): #this is a bit of an ugly patch, shouldn't be neede
