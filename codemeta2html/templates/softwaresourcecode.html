@@ -336,7 +336,7 @@
         {% endif %}
 
         {% if g.value(sscres, SDO.maintainer)  %}
-        <dt class="maintainer" title="The person or organisation that is responsible for maintaining the software and whom you can look for support">Maintainer(s)</dt>
+        <dt class="maintainer" title="The person or organisation that is responsible for maintaining the software and whom you can contact for support">Maintainer(s)</dt>
         <dd class="maintainer">
             <ul>
              {% for label, pores in get_triples(g, sscres, SDO.maintainer) %}
