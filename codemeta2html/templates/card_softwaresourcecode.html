@@ -142,7 +142,7 @@
             <a href="{{ g.value(res2, SDO.url) }}"><i class="fa fa-book" title="Documentation: {{ g.value(res2, SDO.url) }}"></i></a>
             {% endif %}
         {% endfor %}
-        {% for _,_, ciurl in g.triples((res, CODEMETA.contIntegration, None)) %}
+        {% for _,_, ciurl in g.triples((res, CODEMETA.continuousIntegration, None)) %}
             <a href="{{ ciurl }}"><i class="fa fa-check" title="Continuous Integration (icon not indicative of results!)"></i></a>
         {% endfor %}
         {% for _,_, res2 in g.triples((res, SDO.documentation, None)) %}
@@ -213,7 +213,7 @@
         <li><i class="fa fa-code-branch"></i>&nbsp;<a rel="schema:codeRepository" href="{{ g.value(res, SDO.codeRepository) }}" title="Here you can find the source code of this software. This is geared towards technical users who want to install the software themselves.">Source code</a></li>
         {% endif %}
 
-        {% for _,_,targetres in g.triples((res, SDO.targetProduct, None)) %}
+        {% for _,_,targetres in g.triples((res, CODEMETA.isSourceCodeOf, None)) %}
         {% if g.value(targetres, SDO.name) or g.value(targetres, STYPE.executableName) or g.value(targetres, SDO.url) %}
 
             {% if (targetres, RDF.type, SDO.WebApplication) in g or

@@ -199,15 +199,15 @@ def get_badge(g: Graph, res: Union[URIRef, None], key):
                             yield f"{image_url}", f"{name}", f"{name}"
 
 
-def has_actionable_targetproducts(g: Graph, res: Union[URIRef, BNode]) -> bool:
-    for _, _, targetres in g.triples((res, SDO.targetProduct, None)):
+def has_actionable_targetapps(g: Graph, res: Union[URIRef, BNode]) -> bool:
+    for _, _, targetres in g.triples((res, CODEMETA.isSourceCodeOf, None)):
         if (targetres, SDO.url, None) in g:
             return True
     return False
 
 
-def has_displayable_targetproducts(g: Graph, res: Union[URIRef, BNode]) -> bool:
-    for _, _, targetres in g.triples((res, SDO.targetProduct, None)):
+def has_displayable_targetapps(g: Graph, res: Union[URIRef, BNode]) -> bool:
+    for _, _, targetres in g.triples((res, CODEMETA.isSourceCodeOf, None)):
         if (
             (targetres, SDO.url, None) in g
             or (targetres, SDO.name, None) in g
@@ -237,7 +237,7 @@ def get_interface_types(
             comment = contextgraph.value(res3, RDFS.comment)  # used for definitions
             if stype:
                 types.add((stype, comment))
-    for _, _, res2 in g.triples((res, SDO.targetProduct, None)):
+    for _, _, res2 in g.triples((res, CODEMETA.isSourceCodeOf, None)):
         for _, _, res3 in g.triples((res2, RDF.type, None)):
             stype = contextgraph.value(res3, RDFS.label)
             comment = contextgraph.value(res3, RDFS.comment)  # used for definitions
@@ -500,8 +500,8 @@ def serialize_to_html(
         get_version=get_version,
         chain=chain,
         get_doi=get_doi,
-        has_actionable_targetproducts=has_actionable_targetproducts,
-        has_displayable_targetproducts=has_displayable_targetproducts,
+        has_actionable_targetapps=has_actionable_targetapps,
+        has_displayable_targetapps=has_displayable_targetapps,
         **kwargs,
     )
 

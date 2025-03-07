@@ -8,7 +8,7 @@ def read(fname):
 
 setup(
     name = "codemeta2html",
-    version = "0.1.0", #also adapt in codemeta.json
+    version = "0.2.0", #also adapt in codemeta.json
     author = "Maarten van Gompel",
     author_email = "proycon@anaproy.nl",
     description = "Convert software metadata in codemeta to html for visualisation",

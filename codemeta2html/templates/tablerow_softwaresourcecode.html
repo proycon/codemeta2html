@@ -121,8 +121,8 @@
     </td>
 </tr>
 
-{% if g.value(res, SDO.targetProduct) %}
-{% for _,_,targetres in g.triples((res, SDO.targetProduct, None)) %}
+{% if g.value(res, CODEMETA.isSourceCodeOf) %}
+{% for _,_,targetres in g.triples((res, CODEMETA.isSourceCodeOf, None)) %}
 {% if g.value(targetres, SDO.name) or g.value(targetres, STYPE.executableName) or g.value(targetres, SDO.url) %}
 {% include 'tablerow_targetproduct.html' %}
 {% endif %}

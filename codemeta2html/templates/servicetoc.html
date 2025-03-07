@@ -1,7 +1,7 @@
 <ul>
 {% for group, explicit, resources in index %}
 {% for res, label in resources %}
- {% for _, targetres in get_triples(g, res, SDO.targetProduct, abcsort=True) %}
+ {% for _, targetres in get_triples(g, res, CODEMETA.isSourceCodeOf, abcsort=True) %}
    {% if ((targetres, RDF.type, SDO.WebApplication) in g or
      (targetres, RDF.type, SDO.WebSite) in g or
      (targetres, RDF.type, SDO.NotebookApplication) in g or

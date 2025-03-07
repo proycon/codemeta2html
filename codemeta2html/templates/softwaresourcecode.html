@@ -14,7 +14,7 @@
     <div property="schema:description">{{ g.value(sscres, SDO.description) }}</div>
     {% endif %}
 
-    {% if not has_actionable_targetproducts(g,res) %}
+    {% if not has_actionable_targetapps(g,res) %}
         {% if g.value(sscres, SDO.url) %}
         <div class="go">
             <i class="fa fa-home"></i>
@@ -34,12 +34,12 @@
         {% endif %}
     {% endif %}
 
-    {% if has_displayable_targetproducts(g, res) %}
+    {% if has_displayable_targetapps(g, res) %}
     <h3>Provided tools &amp; services</h3>
 
     <div class="targetindex">
-        {% for _, targetres in get_triples(g, sscres, SDO.targetProduct, abcsort=True) %}
-        {% include 'targetproduct.html' %}
+        {% for _, targetres in get_triples(g, sscres, CODEMETA.isSourceCodeOf, abcsort=True) %}
+        {% include 'targetapp.html' %}
         {% endfor %}
     </div>
     {% endif %}
@@ -421,7 +421,7 @@
         </dd>
         {% endif %}
 
-        {% if g.value(sscres, CODEMETA.contIntegration) %}
+        {% if g.value(sscres, CODEMETA.continuousIntegration) %}
         <dt class="contIntegration" title="Service that continuously tests the software on each change">Continuous Integration Tests</dt>
         <dd class="contIntegration"><a rel="codemeta:contIntegration" href="{{ g.value(sscres, CODEMETA.contIntegration) }}">{{ g.value(sscres, CODEMETA.contIntegration) }}</a></dd>
         {% endif %}

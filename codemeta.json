@@ -1,6 +1,6 @@
 {
     "@context": [
-        "https://doi.org/10.5063/schema/codemeta-2.0",
+        "https://w3id.org/codemeta/v3.0",
         "http://schema.org",
         "https://w3id.org/software-types",
         "https://w3id.org/software-iodata"
@@ -37,7 +37,7 @@
         "url": "https://proycon.anaproy.nl"
     },
     "dateCreated": "2023-05-06T10:54:22Z+0200",
-    "dateModified": "2023-05-15T18:08:47Z+0100",
+    "dateModified": "2025-03-07T13:14:47Z+0100",
     "description": "Convert software metadata in codemeta to html for visualisation, can generate fully-fledged static sites that serve well as a portal for a collection of software",
     "developmentStatus": [ "https://www.repostatus.org/#active", "https://w3id.org/research-technology-readiness-levels#Level7ReleaseCandidate" ],
 	"funding": [
@@ -129,7 +129,7 @@
             "version": ">= 6.1.1"
         }
     ],
-    "targetProduct": [{
+    "isSourceCodeOf": [{
         "@id": "/commandlineapplication/codemeta2html",
         "@type": "CommandLineApplication",
         "executableName": "codemeta2html",
@@ -143,5 +143,5 @@
         "runtimePlatform": "Python 3"
     }],
     "url": "https://github.com/proycon/codemeta2html.git",
-    "version": "0.1.0"
+    "version": "0.2.0"
 }
