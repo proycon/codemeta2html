@@ -39,7 +39,7 @@
 
     <div class="targetindex">
         {% for _, targetres in get_triples(g, sscres, CODEMETA.isSourceCodeOf, abcsort=True) %}
-        {% include 'targetapp.html' %}
+        {% include 'targetproduct.html' %}
         {% endfor %}
     </div>
     {% endif %}
