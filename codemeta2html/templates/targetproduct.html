@@ -8,7 +8,7 @@
     {% endif %}
 
     {% if g.value(targetres, SDO.description) and g.value(targetres, SDO.description) != g.value(res, SDO.description) %}
-    <div property="schema:description">{{ g.value(targetres, SDO.description) }}</div>
+    <div class="description" property="schema:description">{{ g.value(targetres, SDO.description) }}</div>
     {% endif %}
 
     {% if (targetres, RDF.type, SDO.WebApplication) in g or

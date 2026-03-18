@@ -389,6 +389,9 @@ div.card ul {
 div.card div.interface li {
     border-radius: 25px;
 }
+div.description, td.description em {
+    white-space: pre-line;
+}
 div.card div.description {
     margin-top: 5px;
     margin-bottom: 5px;
